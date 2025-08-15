@@ -1,4 +1,4 @@
-<h1>MarbleTrack3 Table Migration Dashboard</h1>
+<h1>Dreams Table Migration Dashboard</h1>
 <script>
     function applyMigration(migration) {
         if (confirm("Are you sure you want to apply this migration?\n\n" + migration)) {
