@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a minimalist PHP web application framework designed for DreamHost deployment. It's a custom template-based site with admin dashboard functionality, database migration system, and user authentication using cookies stored in the database.
 
+**Primary Purpose**: This application is designed for AI-powered analysis of dreams over time to identify patterns, symbols, and recurring themes from decades of dream journal entries.
+
 ## Key Architecture
 
 ### Core Components
@@ -85,3 +87,19 @@ This leverages DreamHost's consistent `/home/username/domain.com/` path structur
 - Manual migration application via admin interface (`/admin/migrate_tables.php`)
 - Schema files must follow `create_*.sql` naming convention
 - Each schema directory represents a version (e.g., `00_bedrock/`, `01_gumdrop_cloud/`)
+
+## Source Data: Dream Journal Entries
+
+The dream analysis functionality draws from a rich source of historical data:
+
+- **Source Location**: Dream entries are stored in `/home/thunderrabbit/work/rob/robnugen.com/journal/journal/`
+- **File Pattern**: Dreams are identified by filenames containing `*dream*.html` or `*dream*.md`
+- **Date Range**: Entries span from 1985 to 2025, providing decades of dream data
+- **Structure**: Files are organized chronologically in year/month directory structure
+- **Content**: Each file contains timestamped dream narratives with personal observations
+
+**Related Systems**:
+- The `robnugen.com/journal/` directory contains Perl scripts that generate static HTML indexes
+- These scripts parse all entries from `journal/journal/` to create the public site at https://robnugen.com/journal/
+- The `quick.robnugen.com` directory provides a web interface for quickly adding or editing existing markdown files into `journal/journal/YYYY/MM/` directories
+- Dreams are part of a larger personal journaling system spanning multiple decades
