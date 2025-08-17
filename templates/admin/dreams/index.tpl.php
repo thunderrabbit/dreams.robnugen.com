@@ -11,6 +11,7 @@
     <p><strong>Total dream files found:</strong> <?= $stats['total_files'] ?></p>
     <p><strong>Files processed:</strong> <?= $stats['processed_count'] ?></p>
     <p><strong>Files remaining:</strong> <?= $stats['remaining_count'] ?></p>
+    <p><strong>Dreams in database:</strong> <?= $stats['db_count'] ?></p>
 
     <?php if (!empty($stats['last_processed_file'])): ?>
         <p><strong>Last processed:</strong><br>

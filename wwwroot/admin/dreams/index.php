@@ -16,6 +16,12 @@ $template->page_title = "Dreams Import";
 $scanner = new DreamScanner();
 $stats = $scanner->getStats();
 
+// Get database stats
+$stmt = $mla_database->prepare("SELECT COUNT(*) FROM dreams");
+$stmt->execute();
+$db_count = $stmt->fetchColumn();
+$stats['db_count'] = $db_count;
+
 $message = "";
 $import_results = [];
 
@@ -26,10 +32,21 @@ if ($_POST['action'] ?? '' === 'import') {
     if (empty($batch)) {
         $message = "No more dreams to import!";
     } else {
-        // TODO: Process the batch with DreamImporter
-        // For now, just show what would be imported
+        // Import the batch to database
+        $importer = new DreamImporter($mla_database);
+        $results = $importer->importBatch($batch);
+
         $import_results = $batch;
-        $message = "Found " . count($batch) . " dreams to import";
+        $message = sprintf(
+            "Processed %d files: %d imported, %d skipped",
+            count($batch),
+            $results['imported'],
+            $results['skipped']
+        );
+
+        if (!empty($results['errors'])) {
+            $message .= " | Errors: " . implode('; ', $results['errors']);
+        }
 
         // Update pointer to last file in batch
         if (!empty($batch)) {
