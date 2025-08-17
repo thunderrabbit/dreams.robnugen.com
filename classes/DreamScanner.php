@@ -42,9 +42,63 @@ class DreamScanner {
     }
 
     /**
-     * Step 2: Get sorted list of all dream files
+     * Step 2-4: Get next batch of dream files, starting after pointer
      */
-    public function getAllDreamFiles() {
+    public function getNextBatch($limit = 50) {
+        $last_processed = $this->getLastProcessedFile();
+        $dream_files = [];
+
+        // Get the directory and filename of last processed file for comparison
+        $start_scanning = empty($last_processed);
+
+        // Recursively scan journal directory for dream files
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->journal_base)
+        );
+
+        // Convert iterator to array and sort for consistent ordering
+        $all_files = [];
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $filename = $file->getFilename();
+                $full_path = $file->getPathname();
+
+                // Check if filename contains "dream" (case insensitive)
+                if (stripos($filename, 'dream') !== false) {
+                    $all_files[] = $full_path;
+                }
+            }
+        }
+
+        // Sort files alphabetically for consistent processing
+        sort($all_files);
+
+        // Find starting point and collect next batch
+        foreach ($all_files as $file_path) {
+            if (!$start_scanning) {
+                // Still looking for the last processed file
+                if ($file_path === $last_processed) {
+                    $start_scanning = true; // Start collecting from next file
+                }
+                continue;
+            }
+
+            // Collect files for batch
+            $dream_files[] = $file_path;
+
+            // Stop when we have enough files
+            if (count($dream_files) >= $limit) {
+                break;
+            }
+        }
+
+        return $dream_files;
+    }
+
+    /**
+     * Get all dream files (only for stats - still inefficient but needed for totals)
+     */
+    private function getAllDreamFiles() {
         $dream_files = [];
 
         // Recursively scan journal directory for dream files
@@ -68,27 +122,6 @@ class DreamScanner {
         sort($dream_files);
 
         return $dream_files;
-    }
-
-    /**
-     * Step 3: Find position in file list after pointer
-     * Step 4: Get next batch of files to process
-     */
-    public function getNextBatch($limit = 50) {
-        $last_processed = $this->getLastProcessedFile();
-        $all_files = $this->getAllDreamFiles();
-
-        if (empty($last_processed)) {
-            // First run - start from beginning
-            $start_index = 0;
-        } else {
-            // Find position after last processed file
-            $last_index = array_search($last_processed, $all_files);
-            $start_index = ($last_index !== false) ? $last_index + 1 : 0;
-        }
-
-        // Get next batch
-        return array_slice($all_files, $start_index, $limit);
     }
 
     /**
