@@ -1,0 +1,63 @@
+<?php
+
+# Extract DreamHost project root: /home/username/domain.com
+preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
+include_once $matches[1] . '/prepend.php';
+
+if (!$is_logged_in->isLoggedIn()) {
+    header("Location: /login/");
+    exit;
+}
+
+$template = new Template(config: $config);
+$template->page_title = "Dreams Import";
+
+// Initialize scanner
+$scanner = new DreamScanner();
+$stats = $scanner->getStats();
+
+$message = "";
+$import_results = [];
+
+// Handle form submission
+if ($_POST['action'] ?? '' === 'import') {
+    $batch = $scanner->getNextBatch(50);
+
+    if (empty($batch)) {
+        $message = "No more dreams to import!";
+    } else {
+        // TODO: Process the batch with DreamImporter
+        // For now, just show what would be imported
+        $import_results = $batch;
+        $message = "Found " . count($batch) . " dreams to import";
+
+        // Update pointer to last file in batch
+        if (!empty($batch)) {
+            $scanner->updatePointer(end($batch));
+        }
+    }
+
+    // Refresh stats after import
+    $stats = $scanner->getStats();
+}
+
+// Handle reset pointer
+if ($_POST['action'] ?? '' === 'reset') {
+    $scanner->resetPointer();
+    $stats = $scanner->getStats();
+    $message = "Import pointer reset to beginning";
+}
+
+// Template variables
+$template->setTemplate("admin/dreams/index.tpl.php");
+$template->set("stats", $stats);
+$template->set("message", $message);
+$template->set("import_results", $import_results);
+$inner = $template->grabTheGoods();
+
+$layout = new \Template(config: $config);
+$layout->setTemplate("layout/admin_base.tpl.php");
+$layout->set("page_title", "Dreams Import");
+$layout->set("page_content", $inner);
+$layout->echoToScreen();
+?>
