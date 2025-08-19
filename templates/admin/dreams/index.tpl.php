@@ -2,7 +2,7 @@
     <h1>Dreams Import</h1>
 
     <?php if (!empty($message)): ?>
-        <div style="background: #f0f8ff; border: 1px solid #0066cc; padding: 10px; margin: 10px 0;">
+        <div style="background: #2a3f5f; border: 1px solid #4a90e2; padding: 10px; margin: 10px 0; color: #e0e0e0;">
             <?= htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
@@ -35,7 +35,7 @@
 
     <?php if (!empty($import_results)): ?>
         <h2>Files in This Batch</h2>
-        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #666; padding: 10px; background: #2d2d2d;">
             <?php foreach ($import_results as $file_path): ?>
                 <div style="margin: 2px 0; font-family: monospace; font-size: 12px;">
                     <?= htmlspecialchars(str_replace('/home/barefoot_rob/robnugen.com/journal/journal/', '', $file_path)) ?>
