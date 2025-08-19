@@ -11,6 +11,7 @@ if ($has_pending_migrations) {
 ?>
 
 <div class="PagePanel">
+    <a href="/admin/dreams/">Dreams Import</a> |
     <a href="/profile/">Change Password</a> |
     <a href="/logout/">Logout</a> <br />
 </div>

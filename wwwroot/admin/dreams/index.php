@@ -17,10 +17,14 @@ $scanner = new DreamScanner();
 $stats = $scanner->getStats();
 
 // Get database stats
-$stmt = $mla_database->prepare("SELECT COUNT(*) FROM dreams");
-$stmt->execute();
-$db_count = $stmt->fetchColumn();
-$stats['db_count'] = $db_count;
+try {
+    $stmt = $mla_database->prepare("SELECT COUNT(*) FROM dreams");
+    $stmt->execute();
+    $db_count = $stmt->fetchColumn();
+    $stats['db_count'] = $db_count;
+} catch (Exception $e) {
+    $stats['db_count'] = "Error: " . $e->getMessage();
+}
 
 $message = "";
 $import_results = [];
@@ -47,6 +51,9 @@ if ($_POST['action'] ?? '' === 'import') {
         if (!empty($results['errors'])) {
             $message .= " | Errors: " . implode('; ', $results['errors']);
         }
+
+        // Debug: Show detailed results
+        $message .= " | Debug: " . json_encode($results);
 
         // Update pointer to last file in batch
         if (!empty($batch)) {
