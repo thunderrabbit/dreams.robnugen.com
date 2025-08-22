@@ -1,5 +1,6 @@
 <?php
 
+
 # Extract DreamHost project root: /home/username/domain.com
 preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
 include_once $matches[1] . '/prepend.php';
@@ -30,7 +31,7 @@ $message = "";
 $import_results = [];
 
 // Handle form submission
-if ($_POST['action'] ?? '' === 'import') {
+if (($mla_request->post['action'] ?? '') === 'import') {
     $batch = $scanner->getNextBatch(50);
 
     if (empty($batch)) {
@@ -66,7 +67,7 @@ if ($_POST['action'] ?? '' === 'import') {
 }
 
 // Handle reset pointer
-if ($_POST['action'] ?? '' === 'reset') {
+if (($mla_request->post['action'] ?? '') === 'reset') {
     $scanner->resetPointer();
     $stats = $scanner->getStats();
     $message = "Import pointer reset to beginning";
