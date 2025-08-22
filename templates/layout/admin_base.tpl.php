@@ -11,7 +11,9 @@
     <div class="NavBar">
         <a href="/">View Site</a> |
         <a href="/admin/">Admin Site</a> |
-        <a href="/admin/workers">Workers</a>
+        <a href="/admin/dreams/">Dreams Import</a> |
+        <a href="/profile/">Change Password</a> |
+        <a href="/logout/">Logout</a>
     </div>
     <div class="PageWrapper">
         <?= $page_content ?>

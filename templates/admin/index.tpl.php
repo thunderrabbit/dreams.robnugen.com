@@ -2,7 +2,7 @@
     What's up <?= $username ?>? <br />
 </div>
 <h1>Welcome to the Dreams Admin Dashboard</h1>
-<p>This page can show numbers of workers, parts, snippets, etc</p>
+<p>This page can show numbers of dreams, etc</p>
 <?php
 if ($has_pending_migrations) {
         echo "<h3>Pending DB Migrations</h3>";
@@ -10,11 +10,6 @@ if ($has_pending_migrations) {
     }
 ?>
 
-<div class="PagePanel">
-    <a href="/admin/dreams/">Dreams Import</a> |
-    <a href="/profile/">Change Password</a> |
-    <a href="/logout/">Logout</a> <br />
-</div>
 <div class="fix">
     <p>Sentimental version: <?= $site_version ?></p>
 </div>
