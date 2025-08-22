@@ -56,9 +56,19 @@ if (($mla_request->post['action'] ?? '') === 'import') {
         // Debug: Show detailed results
         $message .= " | Debug: " . json_encode($results);
 
-        // Update pointer to last file in batch
-        if (!empty($batch)) {
-            $scanner->updatePointer(end($batch));
+        // Update pointer to last successfully processed file
+        if (!empty($results['last_successful_file'])) {
+            $scanner->updatePointer($results['last_successful_file']);
+        }
+
+        // Add any failed files to the failed files list
+        if (!empty($results['errors'])) {
+            foreach ($results['errors'] as $error) {
+                // Extract file path from error message
+                if (preg_match('/Error importing ([^:]+):/', $error, $matches)) {
+                    $scanner->addFailedFile($matches[1]);
+                }
+            }
         }
     }
 
@@ -73,11 +83,21 @@ if (($mla_request->post['action'] ?? '') === 'reset') {
     $message = "Import pointer reset to beginning";
 }
 
+// Handle clear failed files
+if (($mla_request->post['action'] ?? '') === 'clear_failed') {
+    $scanner->clearFailedFiles();
+    $message = "Failed files list cleared";
+}
+
+// Get failed files for display
+$failed_files = $scanner->getFailedFiles();
+
 // Template variables
 $template->setTemplate("admin/dreams/index.tpl.php");
 $template->set("stats", $stats);
 $template->set("message", $message);
 $template->set("import_results", $import_results);
+$template->set("failed_files", $failed_files);
 $inner = $template->grabTheGoods();
 
 $layout = new \Template(config: $config);

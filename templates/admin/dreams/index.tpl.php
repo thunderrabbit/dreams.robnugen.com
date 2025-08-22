@@ -1,6 +1,13 @@
 <div class="PagePanel">
     <h1>Dreams Import</h1>
 
+    <form method="post">
+        <input type="hidden" name="action" value="import">
+        <button type="submit" <?= $stats['remaining_count'] == 0 ? 'disabled' : '' ?>>
+            Import Next 50 Dreams
+        </button>
+    </form>
+
     <?php if (!empty($message)): ?>
         <div style="background: #2a3f5f; border: 1px solid #4a90e2; padding: 10px; margin: 10px 0; color: #e0e0e0;">
             <?= htmlspecialchars($message) ?>
@@ -42,6 +49,21 @@
                 </div>
             <?php endforeach; ?>
         </div>
+    <?php endif; ?>
+
+    <?php if (!empty($failed_files) && count($failed_files) > 0): ?>
+        <h2>Failed Files (Encoding Issues)</h2>
+        <div style="max-height: 300px; overflow-y: auto; border: 1px solid #666; padding: 10px; background: #2d2d2d;">
+            <?php foreach ($failed_files as $file_path): ?>
+                <div style="margin: 2px 0; font-family: monospace; font-size: 12px;">
+                    <?= htmlspecialchars(str_replace('/home/barefoot_rob/robnugen.com/journal/journal/', '', $file_path)) ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <form method="post" style="margin-top: 10px;">
+            <input type="hidden" name="action" value="clear_failed">
+            <button type="submit">Clear Failed Files List</button>
+        </form>
     <?php endif; ?>
 </div>
 

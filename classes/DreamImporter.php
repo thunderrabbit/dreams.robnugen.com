@@ -15,7 +15,8 @@ class DreamImporter {
         $results = [
             'imported' => 0,
             'skipped' => 0,
-            'errors' => []
+            'errors' => [],
+            'last_successful_file' => null
         ];
 
         foreach ($file_paths as $file_path) {
@@ -23,11 +24,15 @@ class DreamImporter {
                 $result = $this->importSingleFile($file_path);
                 if ($result === 'imported') {
                     $results['imported']++;
+                    $results['last_successful_file'] = $file_path;
                 } elseif ($result === 'skipped') {
                     $results['skipped']++;
+                    $results['last_successful_file'] = $file_path;
                 }
             } catch (Exception $e) {
                 $results['errors'][] = "Error importing $file_path: " . $e->getMessage();
+                // Stop processing on first error to preserve correct pointer position
+                break;
             }
         }
 

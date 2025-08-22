@@ -4,11 +4,13 @@ class DreamScanner {
 
     private $journal_base;
     private $pointer_file;
+    private $failed_files;
 
     public function __construct() {
         // Use the same journal base path as the main journal system
         $this->journal_base = "/home/barefoot_rob/robnugen.com/journal/journal";
         $this->pointer_file = "/home/barefoot_rob/dreams_import_pointer.txt";
+        $this->failed_files = "/home/barefoot_rob/dreams_failed_files.txt";
     }
 
     /**
@@ -42,10 +44,38 @@ class DreamScanner {
     }
 
     /**
+     * Add a failed file to the failed files list
+     */
+    public function addFailedFile($file_path) {
+        file_put_contents($this->failed_files, $file_path . "\n", FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * Get list of failed files
+     */
+    public function getFailedFiles() {
+        if (!file_exists($this->failed_files)) {
+            return [];
+        }
+        $contents = file_get_contents($this->failed_files);
+        return array_filter(array_map('trim', explode("\n", $contents)));
+    }
+
+    /**
+     * Clear the failed files list
+     */
+    public function clearFailedFiles() {
+        if (file_exists($this->failed_files)) {
+            unlink($this->failed_files);
+        }
+    }
+
+    /**
      * Step 2-4: Get next batch of dream files, starting after pointer
      */
-    public function getNextBatch($limit = 50) {
+    public function getNextBatch($limit = 50, $skip_failed = true) {
         $last_processed = $this->getLastProcessedFile();
+        $failed_files = $skip_failed ? $this->getFailedFiles() : [];
         $dream_files = [];
 
         // Get the directory and filename of last processed file for comparison
@@ -63,11 +93,18 @@ class DreamScanner {
                 $filename = $file->getFilename();
                 $full_path = $file->getPathname();
 
+                // Skip system files and directories
+                if (strpos($full_path, '/.git/') !== false ||
+                    strpos($full_path, '/.') !== false ||
+                    !preg_match('/\.(html|md)$/', $filename)) {
+                    continue;
+                }
+
                 // Check if filename contains "dream" (case insensitive)
                 // but exclude files with "castle" in them (false positives)
-                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
+                // if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
                     $all_files[] = $full_path;
-                }
+                // }
             }
         }
 
@@ -81,6 +118,11 @@ class DreamScanner {
                 if ($file_path === $last_processed) {
                     $start_scanning = true; // Start collecting from next file
                 }
+                continue;
+            }
+
+            // Skip known failed files
+            if (in_array($file_path, $failed_files)) {
                 continue;
             }
 
@@ -112,11 +154,18 @@ class DreamScanner {
                 $filename = $file->getFilename();
                 $full_path = $file->getPathname();
 
+                // Skip system files and directories
+                if (strpos($full_path, '/.git/') !== false ||
+                    strpos($full_path, '/.') !== false ||
+                    !preg_match('/\.(html|md)$/', $filename)) {
+                    continue;
+                }
+
                 // Check if filename contains "dream" (case insensitive)
                 // but exclude files with "castle" in them (false positives)
-                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
+                // if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
                     $dream_files[] = $full_path;
-                }
+                // }
             }
         }
 
