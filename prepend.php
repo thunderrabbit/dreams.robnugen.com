@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "We have migrations!";
+const SENTIMENTAL_VERSION = "Try to import dreams";
 
 # write errors to screen
 ini_set('display_errors', 1);
