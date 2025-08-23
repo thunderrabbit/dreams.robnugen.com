@@ -68,8 +68,10 @@
                 <button type="button" class="dreamBtn" onclick="addTag('nightmare')">😱 Nightmare</button>
                 <button type="button" class="dreamBtn" onclick="addTag('recurring')">🔄 Recurring</button>
                 <button type="button" class="dreamBtn" onclick="addTag('flying')">🕊️ Flying</button>
+                <button type="button" class="dreamBtn" onclick="addTag('skimming')">🏃⚡ Skim</button>
                 <button type="button" class="dreamBtn" onclick="addTag('water')">🌊 Water</button>
                 <button type="button" class="dreamBtn" onclick="addTag('family')">👨‍👩‍👧‍👦 Family</button>
+                <button type="button" class="dreamBtn" onclick="addTag('pb')">pb</button>
             </div>
 
             <label for="post_content">Dream Content:</label>
