@@ -6,12 +6,18 @@
     <meta name="description" content=""/>
     <title><?= $page_title ?? 'Dreams Admin' ?></title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/menu.css">
 </head>
 <body>
     <div class="NavBar">
         <a href="/">View Site</a> |
         <a href="/admin/">Admin Site</a> |
-        <a href="/admin/dreams/">Dreams Import</a> |
+        <div class="dropdown">
+            <a href="/admin/dreams/">Dreams Import ▾</a>
+            <div class="dropdown-menu">
+                <a href="/admin/keywords/">Keyword Analysis</a>
+            </div>
+        </div> |
         <a href="/profile/">Change Password</a> |
         <a href="/logout/">Logout</a>
     </div>
