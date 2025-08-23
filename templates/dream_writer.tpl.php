@@ -273,19 +273,21 @@
         const tagsField = document.getElementById('tags');
         const currentTags = tagsField.value.trim();
 
-        // Check if tag already exists
-        if (currentTags.includes(tag)) {
-            return;
+        // Split tags into array for easier manipulation
+        let tagsArray = currentTags ? currentTags.split(',').map(t => t.trim()) : [];
+
+        // Check if tag already exists - toggle it
+        const tagIndex = tagsArray.indexOf(tag);
+        if (tagIndex !== -1) {
+            // Tag exists, remove it
+            tagsArray.splice(tagIndex, 1);
+        } else {
+            // Tag doesn't exist, add it
+            tagsArray.push(tag);
         }
 
-        // Add tag with proper comma separation
-        if (currentTags === '') {
-            tagsField.value = 'dream, ' + tag;
-        } else if (currentTags === 'dream, sleep') {
-            tagsField.value = 'dream, sleep, ' + tag;
-        } else {
-            tagsField.value = currentTags + ', ' + tag;
-        }
+        // Rebuild tags string
+        tagsField.value = tagsArray.join(', ');
     }
 
     // Auto-focus on title field
