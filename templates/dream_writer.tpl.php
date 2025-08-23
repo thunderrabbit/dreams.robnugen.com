@@ -96,6 +96,53 @@
     .smallField {
         max-width: 150px;
     }
+
+    .contentWrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+        position: relative;
+    }
+
+    .quickTagSidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        position: sticky;
+        top: 10px;
+        min-width: 50px;
+    }
+
+    .quickTagBtn {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        background: #555555;
+        color: white;
+        border: 1px solid #666666;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+        line-height: 1;
+        padding: 0;
+    }
+
+    .quickTagBtn:hover {
+        background: #666666;
+        border-color: #777777;
+    }
+
+    .quickTagBtn:active {
+        background: #777777;
+    }
+
+    .contentWrapper textarea {
+        flex: 1;
+        width: auto;
+    }
     </style>
 </head>
 <body>
@@ -164,7 +211,26 @@
             </div>
 
             <label for="post_content">Dream Content:</label>
-            <textarea id="post_content" name="post_content" placeholder="Describe your dream in detail..." required></textarea>
+            <div class="contentWrapper">
+                <div class="quickTagSidebar">
+                    <button
+                        type="button"
+                        class="quickTagBtn"
+                        onclick="wrapSelectedParagraphs('dream')"
+                        title="Tag as dream">💭</button>
+                    <button
+                        type="button"
+                        class="quickTagBtn"
+                        onclick="wrapSelectedParagraphs('lucid')"
+                        title="Tag as lucid dream">👁️</button>
+                    <button
+                        type="button"
+                        class="quickTagBtn"
+                        onclick="wrapSelectedParagraphs('nightmare')"
+                        title="Tag as nightmare">😱</button>
+                </div>
+                <textarea id="post_content" name="post_content" placeholder="Describe your dream in detail..." required></textarea>
+            </div>
 
             <input type="submit" value="💾 Save Dream">
         </form>
@@ -181,6 +247,28 @@
     </div>
 
     <script>
+    function wrapSelectedParagraphs(className) {
+        const textarea = document.getElementById('post_content');
+        const text = textarea.value;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+
+        const before = text.substring(0, start);
+        const selected = text.substring(start, end);
+        const after = text.substring(end);
+
+        const paragraphs = selected
+            .split(/\n{2,}/)
+            .map(p => `<p class="${className}">${p.trim()}</p>`);
+
+        const newText = before + paragraphs.join("\n\n") + after;
+        textarea.value = newText;
+
+        // Don't reselect the new text because the buttons don't toggle the addition of <p> tags.
+        // textarea.setSelectionRange(before.length, before.length + paragraphs.join("\n\n").length);
+        // textarea.focus();
+    }
+
     function addTag(tag) {
         const tagsField = document.getElementById('tags');
         const currentTags = tagsField.value.trim();
