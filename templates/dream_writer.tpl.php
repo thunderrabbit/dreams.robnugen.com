@@ -27,10 +27,8 @@
     </div>
 
     <div class="PageWrapper">
+        <?php if ($message || $error): ?>
         <div class="PagePanel">
-            <h1>Write Dream</h1>
-            <p>Welcome <?= htmlspecialchars($username) ?>! Write your dream below.</p>
-
             <?php if ($message): ?>
                 <div style="background: #2d5a27; border: 1px solid #4a8c3a; padding: 10px; margin: 10px 0; color: #90ee90; border-radius: 4px;">
                     ✅ <?= htmlspecialchars($message) ?>
@@ -43,6 +41,7 @@
                 </div>
             <?php endif; ?>
         </div>
+        <?php endif; // ($message || $error): ?>
 
         <form method="post" class="dreamForm">
             <div class="timeFields">
