@@ -45,7 +45,6 @@ class Template{
     }
 
     protected function loadTemplate(): string {
-        $charEncode = "UTF-8";
         extract($this->vars);          	// Extract the vars to local namespace
 
         ob_start();                    	// Start output buffering
