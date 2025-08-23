@@ -57,7 +57,7 @@
             </div>
 
             <label for="title">Dream Title:</label>
-            <input type="text" id="title" name="title" placeholder="Enter your dream title..." required>
+            <input type="text" id="title" name="title" value="Dream" placeholder="Enter your dream title..." required>
 
             <label for="tags">Tags:</label>
             <input type="text" id="tags" name="tags" value="dream, sleep" placeholder="dream, lucid, nightmare, etc.">
