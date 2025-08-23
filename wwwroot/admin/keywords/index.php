@@ -16,37 +16,66 @@ $action = $mla_request->post['action'] ?? $mla_request->get['action'] ?? '';
 $message = '';
 $error = '';
 
-if ($action === 'analyze') {
+if ($action === 'analyze_all') {
     try {
         $results = $analyzer->analyzeAllDreams();
-        $message = "Analysis complete! Processed {$results['total_dreams_processed']} dreams, found {$results['unique_keywords_found']} unique keywords ({$results['total_keyword_instances']} total instances).";
+        $message = "Full analysis complete! Processed {$results['total_dreams_processed']} dreams, found {$results['unique_keywords_found']} unique keywords ({$results['total_keyword_instances']} total instances).";
     } catch (Exception $e) {
-        $error = "Error during analysis: " . $e->getMessage();
+        $error = "Error during full analysis: " . $e->getMessage();
+    }
+} elseif ($action === 'analyze_new') {
+    try {
+        $results = $analyzer->analyzeNewDreams();
+        if (isset($results['message'])) {
+            $message = $results['message'];
+        } else {
+            $message = "Incremental analysis complete! Processed {$results['total_dreams_processed']} new dreams, found {$results['unique_keywords_found']} unique keywords ({$results['total_keyword_instances']} total instances).";
+        }
+    } catch (Exception $e) {
+        $error = "Error during incremental analysis: " . $e->getMessage();
+    }
+}
+
+// Check if tables exist first
+$tables_exist = true;
+try {
+    $mla_database->query("SELECT 1 FROM dream_keywords LIMIT 1");
+    $mla_database->query("SELECT 1 FROM keyword_analysis_pointer LIMIT 1");
+} catch (Exception $e) {
+    $tables_exist = false;
+    if (!$error) {
+        $error = "Keyword analysis tables not found. Please run database migrations first at <a href='/admin/migrate_tables.php'>/admin/migrate_tables.php</a>";
     }
 }
 
 // Get data for display
-try {
-    $top_keywords = $analyzer->getTopKeywords(100);
-    $stats = $analyzer->getKeywordStats();
-    $search_results = [];
+$top_keywords = [];
+$stats = [];
+$progress = [];
+$search_results = [];
 
-    // Handle search
-    $search_term = $mla_request->get['search'] ?? '';
-    if ($search_term) {
-        $search_results = $analyzer->searchKeywords($search_term);
+if ($tables_exist) {
+    try {
+        $top_keywords = $analyzer->getTopKeywords(100);
+        $stats = $analyzer->getKeywordStats();
+        $progress = $analyzer->getAnalysisProgress();
+
+        // Handle search
+        $search_term = $mla_request->get['search'] ?? '';
+        if ($search_term) {
+            $search_results = $analyzer->searchKeywords($search_term);
+        }
+
+    } catch (Exception $e) {
+        $error = "Error loading data: " . $e->getMessage();
     }
-
-} catch (Exception $e) {
-    $error = "Error loading data: " . $e->getMessage();
-    $top_keywords = [];
-    $stats = [];
 }
 
 $template = new Template(config: $config);
 $template->setTemplate("admin/keywords/index.tpl.php");
 $template->set("top_keywords", $top_keywords);
 $template->set("stats", $stats);
+$template->set("progress", $progress ?? []);
 $template->set("search_term", $search_term);
 $template->set("search_results", $search_results);
 $template->set("message", $message);

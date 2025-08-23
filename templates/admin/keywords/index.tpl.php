@@ -14,16 +14,51 @@
     <?php endif; ?>
 
     <div style="margin: 20px 0;">
-        <form method="post" style="display: inline;">
-            <input type="hidden" name="action" value="analyze">
-            <button type="submit" style="background: #4a90e2; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
-                Analyze All Dreams
+        <form method="post" style="display: inline; margin-right: 15px;">
+            <input type="hidden" name="action" value="analyze_new">
+            <button type="submit" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
+                Analyze New Dreams
             </button>
         </form>
-        <span style="margin-left: 20px; color: #666;">
-            This will process all dreams and extract keyword frequencies
-        </span>
+        <form method="post" style="display: inline;">
+            <input type="hidden" name="action" value="analyze_all">
+            <button type="submit" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
+                Full Re-Analysis
+            </button>
+        </form>
+        <div style="margin-top: 10px; color: #666; font-size: 14px;">
+            <strong>Analyze New:</strong> Process only dreams added since last analysis (incremental)<br>
+            <strong>Full Re-Analysis:</strong> Clear all keyword data and reprocess everything
+        </div>
     </div>
+
+    <?php if ($progress && $progress['total_dreams'] > 0): ?>
+    <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        <h3 style="margin: 0 0 10px 0;">Analysis Progress</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+            <div>
+                <strong>Total Dreams:</strong><br>
+                <?= number_format($progress['total_dreams']) ?>
+            </div>
+            <div>
+                <strong>Last Analyzed ID:</strong><br>
+                <?= $progress['last_analyzed_id'] ?>
+            </div>
+            <div>
+                <strong>Remaining Dreams:</strong><br>
+                <span style="color: <?= $progress['remaining_dreams'] > 0 ? '#e74c3c' : '#27ae60' ?>;">
+                    <?= number_format($progress['remaining_dreams']) ?>
+                </span>
+            </div>
+            <?php if ($progress['last_analysis_date']): ?>
+            <div>
+                <strong>Last Analysis:</strong><br>
+                <?= date('M j, Y g:i A', strtotime($progress['last_analysis_date'])) ?>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php endif; ?>
 </div>
 
 <?php if ($stats && $stats['total_keywords'] > 0): ?>
