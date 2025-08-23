@@ -22,7 +22,11 @@
 
     <?php if (!empty($stats['last_processed_file'])): ?>
         <p><strong>Last processed:</strong><br>
-        <code><?= htmlspecialchars($stats['last_processed_file']) ?></code></p>
+        <code><?= htmlspecialchars($stats['last_processed_file']) ?></code>
+        <?php if (stripos($stats['last_processed_file'], 'dream') === false): ?>
+            <br><span style="color: #ff0000; font-weight: bold;">⚠️ How did this get a value without 'dream' in it??</span>
+        <?php endif; ?>
+        </p>
     <?php endif; ?>
 
     <h2>Import Actions</h2>
