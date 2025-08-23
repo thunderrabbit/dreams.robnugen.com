@@ -7,6 +7,17 @@ class DreamScanner {
     private $failed_files;
 
     public function __construct(Config $config) {
+        // Validate required config properties
+        if (empty($config->post_path_journal)) {
+            throw new Exception("Config property 'post_path_journal' is required but empty. Please check your Config.php file.");
+        }
+        if (empty($config->dreams_import_pointer_file)) {
+            throw new Exception("Config property 'dreams_import_pointer_file' is required but empty. Please check your Config.php file.");
+        }
+        if (empty($config->dreams_failed_files)) {
+            throw new Exception("Config property 'dreams_failed_files' is required but empty. Please check your Config.php file.");
+        }
+
         // Use paths from config to avoid duplication
         $this->journal_base = $config->post_path_journal;
         $this->pointer_file = $config->dreams_import_pointer_file;
