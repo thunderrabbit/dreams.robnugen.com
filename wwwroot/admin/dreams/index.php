@@ -14,7 +14,7 @@ $template = new Template(config: $config);
 $template->page_title = "Dreams Import";
 
 // Initialize scanner
-$scanner = new DreamScanner();
+$scanner = new DreamScanner($config);
 $stats = $scanner->getStats();
 
 // Get database stats
