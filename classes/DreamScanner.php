@@ -81,35 +81,8 @@ class DreamScanner {
         // Get the directory and filename of last processed file for comparison
         $start_scanning = empty($last_processed);
 
-        // Recursively scan journal directory for dream files
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($this->journal_base)
-        );
-
-        // Convert iterator to array and sort for consistent ordering
-        $all_files = [];
-        foreach ($iterator as $file) {
-            if ($file->isFile()) {
-                $filename = $file->getFilename();
-                $full_path = $file->getPathname();
-
-                // Skip system files and directories
-                if (strpos($full_path, '/.git/') !== false ||
-                    strpos($full_path, '/.') !== false ||
-                    !preg_match('/\.(html|md)$/', $filename)) {
-                    continue;
-                }
-
-                // Check if filename contains "dream" (case insensitive)
-                // but exclude files with "castle" in them (false positives)
-                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
-                    $all_files[] = $full_path;
-                }
-            }
-        }
-
-        // Sort files alphabetically for consistent processing
-        sort($all_files);
+        // Get all valid dream files
+        $all_files = $this->scanAllDreamFiles();
 
         // Find starting point and collect next batch
         foreach ($all_files as $file_path) {
@@ -139,9 +112,9 @@ class DreamScanner {
     }
 
     /**
-     * Get all dream files (only for stats - still inefficient but needed for totals)
+     * Get all valid dream files from the filesystem
      */
-    private function getAllDreamFiles() {
+    private function scanAllDreamFiles() {
         $dream_files = [];
 
         // Recursively scan journal directory for dream files
@@ -161,6 +134,11 @@ class DreamScanner {
                     continue;
                 }
 
+                // Only include files in YYYY/MM/ directory structure
+                if (!preg_match('#/\d{4}/\d{2}/[^/]+$#', $full_path)) {
+                    continue;
+                }
+
                 // Check if filename contains "dream" (case insensitive)
                 // but exclude files with "castle" in them (false positives)
                 if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
@@ -173,6 +151,13 @@ class DreamScanner {
         sort($dream_files);
 
         return $dream_files;
+    }
+
+    /**
+     * Get all dream files (only for stats - still inefficient but needed for totals)
+     */
+    private function getAllDreamFiles() {
+        return $this->scanAllDreamFiles();
     }
 
     /**
