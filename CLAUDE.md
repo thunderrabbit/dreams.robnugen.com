@@ -107,18 +107,70 @@ This leverages DreamHost's consistent `/home/username/domain.com/` path structur
 - `keyword_analysis_pointer` table → `kap_id` (not `id`)
 - This makes joins and debugging much clearer
 
-## Source Data: Dream Journal Entries
+## Dream Analysis System
 
-The dream analysis functionality draws from a rich source of historical data:
+This application provides a comprehensive dream analysis platform with import, keyword analysis, and writing capabilities.
 
-- **Source Location**: Dream entries are stored in `/home/thunderrabbit/work/rob/robnugen.com/journal/journal/`
-- **File Pattern**: Dreams are identified by filenames containing `*dream*.html` or `*dream*.md`
-- **Date Range**: Entries span from 1985 to 2025, providing decades of dream data
-- **Structure**: Files are organized chronologically in year/month directory structure
-- **Content**: Each file contains timestamped dream narratives with personal observations
+### Dream Data Sources
 
-**Related Systems**:
-- The `robnugen.com/journal/` directory contains Perl scripts that generate static HTML indexes
-- These scripts parse all entries from `journal/journal/` to create the public site at https://robnugen.com/journal/
-- The `quick.robnugen.com` directory provides a web interface for quickly adding or editing existing markdown files into `journal/journal/YYYY/MM/` directories
-- Dreams are part of a larger personal journaling system spanning multiple decades
+- **Primary Location**: Dream entries stored in `/home/barefoot_rob/robnugen.com/journal/journal/`
+- **File Pattern**: Dreams identified by filenames containing `*dream*.html` or `*dream*.md`
+- **Date Range**: Entries span from 1985 to 2025, providing 40+ years of dream data
+- **Structure**: Files organized in `YYYY/MM/DDtitle-slug.md` format with Hugo frontmatter
+- **Content**: Each file contains timestamped dream narratives with Hugo-style YAML metadata
+
+### Dream Import System
+
+**Classes**: `DreamScanner`, `DreamImporter`
+- **Batch Processing**: Imports dreams in configurable batches (default 50)
+- **Pointer System**: Tracks last processed file to enable resumable imports
+- **Error Handling**: Failed files tracked separately and skipped on subsequent runs
+- **Encoding Support**: Handles legacy encodings (UTF-8, Windows-1252, EUC-JP, etc.)
+- **Directory Structure**: Only processes files in `YYYY/MM/` directories
+- **Filtering**: Excludes files with "castle" to avoid false positives
+
+### Dream Writing Interface
+
+**Location**: Main page (`/index.php`) when logged in
+**Class**: `QuickPoster` (copied from Quick website)
+- **Dark Theme UI**: Fully integrated with site's dark theme
+- **Form Fields**: Time, date, title, tags, content textarea
+- **Paragraph Wrapping**: Select text and click buttons to wrap with semantic HTML:
+  - 💭 `<p class="dream">` - Standard dream content
+  - 👁️ `<p class="lucid">` - Lucid dream segments  
+  - 😱 `<p class="nightmare">` - Nightmare content
+- **Toggle Tags**: Quick tag buttons that add/remove tags (lucid, nightmare, recurring, etc.)
+- **File Creation**: Saves directly to journal filesystem with proper Hugo frontmatter
+- **Auto-Import Ready**: Files automatically detected by import system
+
+### Keyword Analysis System
+
+**Classes**: `DreamKeywordAnalyzer`
+- **Smart Text Processing**: Preserves contractions, removes stop words and HTML entities
+- **Incremental Analysis**: Pointer-based system to analyze only new dreams
+- **Frequency Tracking**: Counts keyword occurrences across all dreams with date ranges
+- **Visual Dashboard**: 2D grid heat maps showing temporal patterns
+- **Search Functionality**: Pattern-based keyword search
+- **Database Storage**: Results stored in `dream_keywords` table
+
+### Configuration Management
+
+**Critical Path Configuration**: All hardcoded paths moved to Config to avoid duplication
+- `post_path_journal`: Journal directory path (shared by QuickPoster and DreamScanner)
+- `dreams_import_pointer_file`: Import progress tracking
+- `dreams_failed_files`: Failed file tracking
+- **Validation**: DreamScanner constructor validates all required config properties
+
+### Navigation System
+
+**Dropdown Menus**: CSS-based dropdown navigation with dark theme styling
+- **Dreams Import ▾**: Dream import system, Keyword analysis
+- **Profile ▾**: Profile settings, Logout
+- **Menu CSS**: Separate `menu.css` file for reusable dropdown components
+
+### Related Systems
+
+- **Quick Website** (`quick.robnugen.com`): Full-featured journal writing with git integration
+- **Base Template** (`new-DH-user-site`): Framework foundation for creating new sites
+- **Public Journal** (`robnugen.com/journal/`): Static site generated from journal files
+- **Integration**: Dreams site writes files, Quick site handles git operations
