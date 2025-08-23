@@ -102,9 +102,9 @@ class DreamScanner {
 
                 // Check if filename contains "dream" (case insensitive)
                 // but exclude files with "castle" in them (false positives)
-                // if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
+                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
                     $all_files[] = $full_path;
-                // }
+                }
             }
         }
 
@@ -163,9 +163,9 @@ class DreamScanner {
 
                 // Check if filename contains "dream" (case insensitive)
                 // but exclude files with "castle" in them (false positives)
-                // if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
+                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
                     $dream_files[] = $full_path;
-                // }
+                }
             }
         }
 
