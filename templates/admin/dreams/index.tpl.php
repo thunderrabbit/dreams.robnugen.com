@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const remainingCount = <?= $stats['remaining_count'] ?>;
 
     // Only auto-click if remaining count is >= 50
-    if (remainingCount >= 90) {
+    if (remainingCount >= 999990) {
         console.log('Auto-import will start in 10 seconds. Remaining files: ' + remainingCount);
 
         setTimeout(function() {
