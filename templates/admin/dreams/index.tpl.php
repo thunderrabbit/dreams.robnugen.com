@@ -70,3 +70,27 @@
 <div class="PagePanel">
     <a href="/admin/">← Back to Admin</a>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the remaining count from the page
+    const remainingCount = <?= $stats['remaining_count'] ?>;
+
+    // Only auto-click if remaining count is >= 50
+    if (remainingCount >= 90) {
+        console.log('Auto-import will start in 10 seconds. Remaining files: ' + remainingCount);
+
+        setTimeout(function() {
+            const importButton = document.querySelector('button[type="submit"]');
+            if (importButton && !importButton.disabled) {
+                console.log('Auto-clicking import button...');
+                importButton.click();
+            } else {
+                console.log('Import button not found or disabled');
+            }
+        }, 8000); // 8 seconds
+    } else {
+        console.log('Auto-import stopped. Remaining files (' + remainingCount + ') is below 50 threshold.');
+    }
+});
+</script>
