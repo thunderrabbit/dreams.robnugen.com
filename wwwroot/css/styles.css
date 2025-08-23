@@ -2,19 +2,19 @@ body {
     font-family: system-ui, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #eef7fc;
-    color: #222;
+    background-color: #1a1a1a;
+    color: #e0e0e0;
 }
 
 .NavBar {
-    background-color: #d0eaff;
+    background-color: #2a2a2a;
     padding: 0.75em 1em;
-    border-bottom: 2px solid #b0d4ec;
+    border-bottom: 2px solid #404040;
     text-align: center;
 }
 
 .NavBar a {
-    color: #0366a8;
+    color: #7db8e8;
     text-decoration: none;
     margin: 0 0.75em;
     font-weight: bold;
@@ -28,21 +28,21 @@ body {
     max-width: 900px;
     margin: 2em auto;
     padding: 1em;
-    background-color: #ffffff;
+    background-color: #2d2d2d;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .PagePanel {
     margin-bottom: 1.5em;
     padding: 1em;
-    background-color: #f3faff;
-    border: 1px solid #cde5f6;
+    background-color: #3a3a3a;
+    border: 1px solid #555555;
     border-radius: 6px;
 }
 
 .fix {
     font-size: 0.85em;
     text-align: right;
-    color: #555;
+    color: #aaa;
 }

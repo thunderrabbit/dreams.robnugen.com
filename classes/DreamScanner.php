@@ -4,11 +4,13 @@ class DreamScanner {
 
     private $journal_base;
     private $pointer_file;
+    private $failed_files;
 
     public function __construct() {
         // Use the same journal base path as the main journal system
         $this->journal_base = "/home/barefoot_rob/robnugen.com/journal/journal";
         $this->pointer_file = "/home/barefoot_rob/dreams_import_pointer.txt";
+        $this->failed_files = "/home/barefoot_rob/dreams_failed_files.txt";
     }
 
     /**
@@ -42,9 +44,77 @@ class DreamScanner {
     }
 
     /**
-     * Step 2: Get sorted list of all dream files
+     * Add a failed file to the failed files list
      */
-    public function getAllDreamFiles() {
+    public function addFailedFile($file_path) {
+        file_put_contents($this->failed_files, $file_path . "\n", FILE_APPEND | LOCK_EX);
+    }
+
+    /**
+     * Get list of failed files
+     */
+    public function getFailedFiles() {
+        if (!file_exists($this->failed_files)) {
+            return [];
+        }
+        $contents = file_get_contents($this->failed_files);
+        return array_filter(array_map('trim', explode("\n", $contents)));
+    }
+
+    /**
+     * Clear the failed files list
+     */
+    public function clearFailedFiles() {
+        if (file_exists($this->failed_files)) {
+            unlink($this->failed_files);
+        }
+    }
+
+    /**
+     * Step 2-4: Get next batch of dream files, starting after pointer
+     */
+    public function getNextBatch($limit = 50, $skip_failed = true) {
+        $last_processed = $this->getLastProcessedFile();
+        $failed_files = $skip_failed ? $this->getFailedFiles() : [];
+        $dream_files = [];
+
+        // Get the directory and filename of last processed file for comparison
+        $start_scanning = empty($last_processed);
+
+        // Get all valid dream files
+        $all_files = $this->scanAllDreamFiles();
+
+        // Find starting point and collect next batch
+        foreach ($all_files as $file_path) {
+            if (!$start_scanning) {
+                // Still looking for the last processed file
+                if ($file_path === $last_processed) {
+                    $start_scanning = true; // Start collecting from next file
+                }
+                continue;
+            }
+
+            // Skip known failed files
+            if (in_array($file_path, $failed_files)) {
+                continue;
+            }
+
+            // Collect files for batch
+            $dream_files[] = $file_path;
+
+            // Stop when we have enough files
+            if (count($dream_files) >= $limit) {
+                break;
+            }
+        }
+
+        return $dream_files;
+    }
+
+    /**
+     * Get all valid dream files from the filesystem
+     */
+    private function scanAllDreamFiles() {
         $dream_files = [];
 
         // Recursively scan journal directory for dream files
@@ -57,8 +127,21 @@ class DreamScanner {
                 $filename = $file->getFilename();
                 $full_path = $file->getPathname();
 
+                // Skip system files and directories
+                if (strpos($full_path, '/.git/') !== false ||
+                    strpos($full_path, '/.') !== false ||
+                    !preg_match('/\.(html|md)$/', $filename)) {
+                    continue;
+                }
+
+                // Only include files in YYYY/MM/ directory structure
+                if (!preg_match('#/\d{4}/\d{2}/[^/]+$#', $full_path)) {
+                    continue;
+                }
+
                 // Check if filename contains "dream" (case insensitive)
-                if (stripos($filename, 'dream') !== false) {
+                // but exclude files with "castle" in them (false positives)
+                if (stripos($filename, 'dream') !== false && stripos($filename, 'castle') === false) {
                     $dream_files[] = $full_path;
                 }
             }
@@ -71,24 +154,10 @@ class DreamScanner {
     }
 
     /**
-     * Step 3: Find position in file list after pointer
-     * Step 4: Get next batch of files to process
+     * Get all dream files (only for stats - still inefficient but needed for totals)
      */
-    public function getNextBatch($limit = 50) {
-        $last_processed = $this->getLastProcessedFile();
-        $all_files = $this->getAllDreamFiles();
-
-        if (empty($last_processed)) {
-            // First run - start from beginning
-            $start_index = 0;
-        } else {
-            // Find position after last processed file
-            $last_index = array_search($last_processed, $all_files);
-            $start_index = ($last_index !== false) ? $last_index + 1 : 0;
-        }
-
-        // Get next batch
-        return array_slice($all_files, $start_index, $limit);
+    private function getAllDreamFiles() {
+        return $this->scanAllDreamFiles();
     }
 
     /**
