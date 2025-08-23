@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Try to import dreams";
+const SENTIMENTAL_VERSION = "Temporally analyzed";
 
 # write errors to screen
 ini_set('display_errors', 1);
