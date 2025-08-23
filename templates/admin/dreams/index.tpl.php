@@ -22,7 +22,7 @@
 
     <?php if (!empty($stats['last_processed_file'])): ?>
         <p><strong>Last processed:</strong><br>
-        <code><?= htmlspecialchars(basename($stats['last_processed_file'])) ?></code></p>
+        <code><?= htmlspecialchars($stats['last_processed_file']) ?></code></p>
     <?php endif; ?>
 
     <h2>Import Actions</h2>
