@@ -6,11 +6,22 @@ class DreamScanner {
     private $pointer_file;
     private $failed_files;
 
-    public function __construct() {
-        // Use the same journal base path as the main journal system
-        $this->journal_base = "/home/barefoot_rob/robnugen.com/journal/journal";
-        $this->pointer_file = "/home/barefoot_rob/dreams_import_pointer.txt";
-        $this->failed_files = "/home/barefoot_rob/dreams_failed_files.txt";
+    public function __construct(Config $config) {
+        // Validate required config properties
+        if (empty($config->post_path_journal)) {
+            throw new Exception("Config property 'post_path_journal' is required but empty. Please check your Config.php file.");
+        }
+        if (empty($config->dreams_import_pointer_file)) {
+            throw new Exception("Config property 'dreams_import_pointer_file' is required but empty. Please check your Config.php file.");
+        }
+        if (empty($config->dreams_failed_files)) {
+            throw new Exception("Config property 'dreams_failed_files' is required but empty. Please check your Config.php file.");
+        }
+
+        // Use paths from config to avoid duplication
+        $this->journal_base = $config->post_path_journal;
+        $this->pointer_file = $config->dreams_import_pointer_file;
+        $this->failed_files = $config->dreams_failed_files;
     }
 
     /**
