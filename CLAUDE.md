@@ -88,6 +88,25 @@ This leverages DreamHost's consistent `/home/username/domain.com/` path structur
 - Schema files must follow `create_*.sql` naming convention
 - Each schema directory represents a version (e.g., `00_bedrock/`, `01_gumdrop_cloud/`)
 
+### CRITICAL DATABASE RULES
+
+**ALWAYS CHECK TABLE SCHEMAS BEFORE WRITING CODE:**
+1. **Never assume column names** - Check existing table definitions in `db_schemas/` files
+2. **Use descriptive primary keys** - Use `table_name_id` format (e.g., `dream_id`, `user_id`, `kap_id`)
+3. **Verify column names** - Read the actual CREATE TABLE statements, don't guess
+4. **Check existing data** - Look at how other code references the same tables
+
+**Example: Before writing queries for `dreams` table:**
+- ✅ Check `db_schemas/02_dreams/create_dreams.sql` to see it uses `dream_id` not `id`
+- ✅ Use `SELECT dream_id, content_clean FROM dreams WHERE dream_id > ?`
+- ❌ Never assume `SELECT id, content FROM dreams WHERE id > ?`
+
+**Primary Key Naming Convention:**
+- `dreams` table → `dream_id` (not `id`)
+- `users` table → `user_id` (not `id`)
+- `keyword_analysis_pointer` table → `kap_id` (not `id`)
+- This makes joins and debugging much clearer
+
 ## Source Data: Dream Journal Entries
 
 The dream analysis functionality draws from a rich source of historical data:
