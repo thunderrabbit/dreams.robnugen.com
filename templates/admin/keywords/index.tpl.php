@@ -33,7 +33,7 @@
     </div>
 
     <?php if ($progress && $progress['total_dreams'] > 0): ?>
-    <div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 15px; margin: 15px 0; border-radius: 4px;">
+    <div style="background: #3a3a3a; border: 1px solid #555555; padding: 15px; margin: 15px 0; border-radius: 4px;">
         <h3 style="margin: 0 0 10px 0;">Analysis Progress</h3>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
             <div>
