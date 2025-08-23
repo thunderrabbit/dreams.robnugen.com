@@ -18,8 +18,12 @@
                 <a href="/admin/keywords/">Keyword Analysis</a>
             </div>
         </div> |
-        <a href="/profile/">Change Password</a> |
-        <a href="/logout/">Logout</a>
+        <div class="dropdown">
+            <a href="/profile/">Profile ▾</a>
+            <div class="dropdown-menu">
+                <a href="/logout/">Logout</a>
+            </div>
+        </div>
     </div>
     <div class="PageWrapper">
         <?= $page_content ?>
