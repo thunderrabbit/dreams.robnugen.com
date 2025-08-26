@@ -280,6 +280,7 @@ class DreamKeywordAnalyzer {
             SELECT keyword, frequency, first_seen, last_seen,
                    DATEDIFF(last_seen, first_seen) + 1 as span_days
             FROM dream_keywords
+            WHERE is_stop_word = 0
             ORDER BY frequency DESC
             LIMIT ?
         ");
@@ -294,7 +295,7 @@ class DreamKeywordAnalyzer {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen
             FROM dream_keywords
-            WHERE keyword LIKE ?
+            WHERE keyword LIKE ? AND is_stop_word = 0
             ORDER BY frequency DESC
         ");
         $stmt->execute(['%' . $pattern . '%']);
@@ -314,6 +315,7 @@ class DreamKeywordAnalyzer {
                 MIN(first_seen) as earliest_date,
                 MAX(last_seen) as latest_date
             FROM dream_keywords
+            WHERE is_stop_word = 0
         ");
         return $stmt->fetch();
     }

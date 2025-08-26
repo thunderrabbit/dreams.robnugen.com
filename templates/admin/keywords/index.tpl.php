@@ -124,7 +124,10 @@
                 $intensity = min(1.0, $keyword['frequency'] / $stats['max_frequency']);
                 $span_years = max(1, round(($keyword['span_days'] ?? 1) / 365, 1));
                 ?>
-                <div style="border: 1px solid #666; padding: 8px; text-align: center; background: rgba(74, 144, 226, <?= $intensity * 0.6 + 0.1 ?>);">
+                <div class="keyword-item" style="border: 1px solid #666; padding: 8px; text-align: center; background: rgba(74, 144, 226, <?= $intensity * 0.6 + 0.1 ?>); position: relative;">
+                    <button class="stop-word-btn" data-keyword="<?= htmlspecialchars($keyword['keyword']) ?>"
+                            style="position: absolute; top: 2px; right: 2px; background: rgba(231, 76, 60, 0.8); color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 12px; cursor: pointer; display: none;"
+                            title="Mark as uninteresting">✕</button>
                     <strong style="font-size: 14px;"><?= htmlspecialchars($keyword['keyword']) ?></strong><br>
                     <span style="font-size: 16px; color: #fff;"><?= $keyword['frequency'] ?></span><br>
                     <small style="font-size: 11px;">
@@ -143,3 +146,69 @@
 <div class="PagePanel">
     <a href="/admin/">← Back to Admin Dashboard</a>
 </div>
+
+<style>
+.keyword-item:hover .stop-word-btn {
+    display: block !important;
+}
+
+.stop-word-btn:hover {
+    background: rgba(231, 76, 60, 1) !important;
+    transform: scale(1.1);
+}
+
+.keyword-item.marking-stop {
+    opacity: 0.5;
+    transform: scale(0.95);
+    transition: all 0.3s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stopWordButtons = document.querySelectorAll('.stop-word-btn');
+
+    stopWordButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const keyword = this.dataset.keyword;
+            const keywordItem = this.closest('.keyword-item');
+
+            if (keywordItem.classList.contains('marking-stop')) return; // Prevent double-clicks
+
+            keywordItem.classList.add('marking-stop');
+
+            fetch('/admin/keywords/toggle_stop_word.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `keyword=${encodeURIComponent(keyword)}&is_stop_word=1`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Fade out the keyword item
+                    keywordItem.style.transition = 'all 0.15s ease';
+                    keywordItem.style.opacity = '0';
+                    keywordItem.style.transform = 'scale(0.8)';
+
+                    setTimeout(() => {
+                        keywordItem.remove();
+                    }, 50);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                    keywordItem.classList.remove('marking-stop');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Network error occurred');
+                keywordItem.classList.remove('marking-stop');
+            });
+        });
+    });
+});
+</script>
