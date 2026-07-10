@@ -20,15 +20,22 @@
                 Analyze New Dreams
             </button>
         </form>
-        <form method="post" style="display: inline;">
+        <form method="post" style="display: inline; margin-right: 15px;">
             <input type="hidden" name="action" value="analyze_all">
             <button type="submit" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
                 Full Re-Analysis
             </button>
         </form>
+        <form method="post" style="display: inline;">
+            <input type="hidden" name="action" value="populate_junction">
+            <button type="submit" style="background: #9b59b6; color: white; padding: 10px 20px; border: none; border-radius: 4px;">
+                Populate Junction Table
+            </button>
+        </form>
         <div style="margin-top: 10px; color: #666; font-size: 14px;">
             <strong>Analyze New:</strong> Process only dreams added since last analysis (incremental)<br>
-            <strong>Full Re-Analysis:</strong> Clear all keyword data and reprocess everything
+            <strong>Full Re-Analysis:</strong> Clear all keyword data and reprocess everything<br>
+            <strong>Populate Junction Table:</strong> Create keyword-to-dream relationships for finding which dreams contain specific words
         </div>
     </div>
 
