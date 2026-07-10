@@ -34,6 +34,13 @@ if ($action === 'analyze_all') {
     } catch (Exception $e) {
         $error = "Error during incremental analysis: " . $e->getMessage();
     }
+} elseif ($action === 'populate_junction') {
+    try {
+        $results = $analyzer->populateJunctionTable();
+        $message = "Junction table populated! Processed {$results['dreams_processed']} dreams, created {$results['links_created']} keyword-dream links.";
+    } catch (Exception $e) {
+        $error = "Error populating junction table: " . $e->getMessage();
+    }
 }
 
 // Check if tables exist first

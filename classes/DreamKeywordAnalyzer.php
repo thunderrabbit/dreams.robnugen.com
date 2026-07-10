@@ -365,4 +365,65 @@ class DreamKeywordAnalyzer {
             'max_dream_id' => $totals['max_id']
         ];
     }
+
+    /**
+     * Populate the keywords_2_dreams junction table by re-analyzing all dreams
+     * This creates the many-to-many relationships between keywords and dreams
+     */
+    public function populateJunctionTable() {
+        // Clear existing junction data
+        $this->database->query("TRUNCATE TABLE keywords_2_dreams");
+
+        // Get all dreams with content
+        $dreams_stmt = $this->database->query("
+            SELECT dream_id, content_clean
+            FROM dreams
+            WHERE content_clean IS NOT NULL AND content_clean != ''
+            ORDER BY dream_id
+        ");
+
+        $total_dreams = 0;
+        $total_links = 0;
+
+        while ($dream = $dreams_stmt->fetch()) {
+            $total_dreams++;
+
+            // Extract keywords from this dream's content
+            $keywords = $this->extractKeywords($dream['content_clean']);
+
+            foreach ($keywords as $keyword => $count) {
+                // Get the dream_keyword_id for this keyword
+                $keyword_stmt = $this->database->prepare("
+                    SELECT dream_keyword_id FROM dream_keywords WHERE keyword = ?
+                ");
+                $keyword_stmt->execute([$keyword]);
+                $keyword_row = $keyword_stmt->fetch();
+
+                if ($keyword_row) {
+                    // Insert into junction table
+                    $junction_stmt = $this->database->prepare("
+                        INSERT INTO keywords_2_dreams (dream_keyword_id, dream_id, occurrence_count)
+                        VALUES (?, ?, ?)
+                        ON DUPLICATE KEY UPDATE occurrence_count = VALUES(occurrence_count)
+                    ");
+                    $junction_stmt->execute([
+                        $keyword_row['dream_keyword_id'],
+                        $dream['dream_id'],
+                        $count
+                    ]);
+                    $total_links++;
+                }
+            }
+
+            // Progress feedback every 100 dreams
+            if ($total_dreams % 100 == 0) {
+                error_log("Processed $total_dreams dreams, created $total_links keyword-dream links");
+            }
+        }
+
+        return [
+            'dreams_processed' => $total_dreams,
+            'links_created' => $total_links
+        ];
+    }
 }
