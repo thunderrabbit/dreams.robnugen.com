@@ -1,6 +1,5 @@
 <?php
 
-
 # Extract DreamHost project root: /home/username/domain.com
 preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
 include_once $matches[1] . '/prepend.php';
@@ -105,4 +104,3 @@ $layout->setTemplate("layout/admin_base.tpl.php");
 $layout->set("page_title", "Dreams Import");
 $layout->set("page_content", $inner);
 $layout->echoToScreen();
-?>

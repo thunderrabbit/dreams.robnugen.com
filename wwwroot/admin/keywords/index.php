@@ -72,7 +72,6 @@ if ($tables_exist) {
         if ($search_term) {
             $search_results = $analyzer->searchKeywords($search_term);
         }
-
     } catch (Exception $e) {
         $error = "Error loading data: " . $e->getMessage();
     }
@@ -94,4 +93,3 @@ $layout->setTemplate("layout/admin_base.tpl.php");
 $layout->set("page_title", "Dream Keyword Analysis");
 $layout->set("page_content", $inner);
 $layout->echoToScreen();
-?>

@@ -7,7 +7,8 @@
  * This class handles creating and saving journal entries to the filesystem.
  * It creates Hugo-style markdown files with YAML frontmatter.
  */
-class QuickPoster{
+class QuickPoster
+{
     public readonly string $post_path;
 
     public function __construct(
@@ -22,7 +23,7 @@ class QuickPoster{
      */
     public function createPost(\Config $config, array $post_array): bool
     {
-        if($this->debug > 2){
+        if ($this->debug > 2) {
             print_rob(object: "inside createPost", exit: false);
             print_rob(object: $post_array, exit: false);
         }

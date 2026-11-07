@@ -1,7 +1,7 @@
 <?php
 
-class DreamKeywordAnalyzer {
-
+class DreamKeywordAnalyzer
+{
     private $database;
 
     // Common English stop words to filter out
@@ -25,14 +25,16 @@ class DreamKeywordAnalyzer {
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
 
-    public function __construct($database) {
+    public function __construct($database)
+    {
         $this->database = $database;
     }
 
     /**
      * Analyze only new dreams since last analysis
      */
-    public function analyzeNewDreams() {
+    public function analyzeNewDreams()
+    {
         $last_id = $this->getLastAnalyzedId();
 
         // Get new dreams since last analysis
@@ -97,7 +99,8 @@ class DreamKeywordAnalyzer {
     /**
      * Analyze all dreams (full reanalysis)
      */
-    public function analyzeAllDreams() {
+    public function analyzeAllDreams()
+    {
         // Clear existing keyword data
         $this->database->exec("TRUNCATE TABLE dream_keywords");
         $this->database->exec("TRUNCATE TABLE keyword_analysis_pointer");
@@ -153,7 +156,8 @@ class DreamKeywordAnalyzer {
     /**
      * Extract meaningful keywords from dream text
      */
-    private function extractKeywords($text) {
+    private function extractKeywords($text)
+    {
         // Convert to lowercase and remove HTML tags
         $text = strtolower(strip_tags($text));
 
@@ -171,10 +175,12 @@ class DreamKeywordAnalyzer {
 
         foreach ($words as $word) {
             // Skip short words, numbers, stop words, and HTML entities
-            if (strlen($word) < 3 ||
+            if (
+                strlen($word) < 3 ||
                 is_numeric($word) ||
                 in_array($word, $this->stop_words) ||
-                in_array($word, $this->html_entities)) {
+                in_array($word, $this->html_entities)
+            ) {
                 continue;
             }
 
@@ -187,7 +193,8 @@ class DreamKeywordAnalyzer {
     /**
      * Store keyword frequencies in database (for full analysis)
      */
-    private function storeKeywords($keyword_data, $keyword_dates) {
+    private function storeKeywords($keyword_data, $keyword_dates)
+    {
         $stmt = $this->database->prepare("
             INSERT INTO dream_keywords (keyword, frequency, first_seen, last_seen)
             VALUES (?, ?, ?, ?)
@@ -206,7 +213,8 @@ class DreamKeywordAnalyzer {
     /**
      * Update keyword frequencies (for incremental analysis)
      */
-    private function updateKeywords($keyword_data, $keyword_dates) {
+    private function updateKeywords($keyword_data, $keyword_dates)
+    {
         foreach ($keyword_data as $keyword => $new_frequency) {
             // Try to update existing keyword
             $stmt = $this->database->prepare("
@@ -245,7 +253,8 @@ class DreamKeywordAnalyzer {
     /**
      * Get last analyzed dream ID
      */
-    private function getLastAnalyzedId() {
+    private function getLastAnalyzedId()
+    {
         $stmt = $this->database->query("
             SELECT last_analyzed_dream_id
             FROM keyword_analysis_pointer
@@ -260,7 +269,8 @@ class DreamKeywordAnalyzer {
     /**
      * Update analysis pointer
      */
-    private function updateAnalysisPointer($last_id, $count) {
+    private function updateAnalysisPointer($last_id, $count)
+    {
         // Clear existing pointer and insert new one
         $this->database->exec("TRUNCATE TABLE keyword_analysis_pointer");
 
@@ -275,7 +285,8 @@ class DreamKeywordAnalyzer {
     /**
      * Get top keywords by frequency
      */
-    public function getTopKeywords($limit = 50) {
+    public function getTopKeywords($limit = 50)
+    {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen,
                    DATEDIFF(last_seen, first_seen) + 1 as span_days
@@ -291,7 +302,8 @@ class DreamKeywordAnalyzer {
     /**
      * Search for specific keyword patterns
      */
-    public function searchKeywords($pattern) {
+    public function searchKeywords($pattern)
+    {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen
             FROM dream_keywords
@@ -305,7 +317,8 @@ class DreamKeywordAnalyzer {
     /**
      * Get keyword statistics
      */
-    public function getKeywordStats() {
+    public function getKeywordStats()
+    {
         $stmt = $this->database->query("
             SELECT
                 COUNT(*) as total_keywords,
@@ -323,7 +336,8 @@ class DreamKeywordAnalyzer {
     /**
      * Get analysis progress info
      */
-    public function getAnalysisProgress() {
+    public function getAnalysisProgress()
+    {
         $pointer_stmt = $this->database->query("
             SELECT last_analyzed_dream_id, last_analysis_date, total_dreams_analyzed
             FROM keyword_analysis_pointer
@@ -370,7 +384,8 @@ class DreamKeywordAnalyzer {
      * Populate the keywords_2_dreams junction table by re-analyzing all dreams
      * This creates the many-to-many relationships between keywords and dreams
      */
-    public function populateJunctionTable() {
+    public function populateJunctionTable()
+    {
         // Clear existing junction data
         $this->database->query("TRUNCATE TABLE keywords_2_dreams");
 

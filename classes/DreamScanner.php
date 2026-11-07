@@ -1,12 +1,13 @@
 <?php
 
-class DreamScanner {
-
+class DreamScanner
+{
     private $journal_base;
     private $pointer_file;
     private $failed_files;
 
-    public function __construct(Config $config) {
+    public function __construct(Config $config)
+    {
         // Validate required config properties
         if (empty($config->post_path_journal)) {
             throw new Exception("Config property 'post_path_journal' is required but empty. Please check your Config.php file.");
@@ -27,7 +28,8 @@ class DreamScanner {
     /**
      * Step 0/1: Read pointer file, return last processed file path or empty string
      */
-    public function getLastProcessedFile() {
+    public function getLastProcessedFile()
+    {
         if (!file_exists($this->pointer_file)) {
             // Step 0: File doesn't exist, start from beginning
             return "";
@@ -41,14 +43,16 @@ class DreamScanner {
     /**
      * Step 5: Update pointer to last processed file
      */
-    public function updatePointer($file_path) {
+    public function updatePointer($file_path)
+    {
         file_put_contents($this->pointer_file, $file_path);
     }
 
     /**
      * Reset pointer (start over from beginning)
      */
-    public function resetPointer() {
+    public function resetPointer()
+    {
         if (file_exists($this->pointer_file)) {
             unlink($this->pointer_file);
         }
@@ -57,14 +61,16 @@ class DreamScanner {
     /**
      * Add a failed file to the failed files list
      */
-    public function addFailedFile($file_path) {
+    public function addFailedFile($file_path)
+    {
         file_put_contents($this->failed_files, $file_path . "\n", FILE_APPEND | LOCK_EX);
     }
 
     /**
      * Get list of failed files
      */
-    public function getFailedFiles() {
+    public function getFailedFiles()
+    {
         if (!file_exists($this->failed_files)) {
             return [];
         }
@@ -75,7 +81,8 @@ class DreamScanner {
     /**
      * Clear the failed files list
      */
-    public function clearFailedFiles() {
+    public function clearFailedFiles()
+    {
         if (file_exists($this->failed_files)) {
             unlink($this->failed_files);
         }
@@ -84,7 +91,8 @@ class DreamScanner {
     /**
      * Step 2-4: Get next batch of dream files, starting after pointer
      */
-    public function getNextBatch($limit = 50, $skip_failed = true) {
+    public function getNextBatch($limit = 50, $skip_failed = true)
+    {
         $last_processed = $this->getLastProcessedFile();
         $failed_files = $skip_failed ? $this->getFailedFiles() : [];
         $dream_files = [];
@@ -125,7 +133,8 @@ class DreamScanner {
     /**
      * Get all valid dream files from the filesystem
      */
-    private function scanAllDreamFiles() {
+    private function scanAllDreamFiles()
+    {
         $dream_files = [];
 
         // Recursively scan journal directory for dream files
@@ -139,9 +148,11 @@ class DreamScanner {
                 $full_path = $file->getPathname();
 
                 // Skip system files and directories
-                if (strpos($full_path, '/.git/') !== false ||
+                if (
+                    strpos($full_path, '/.git/') !== false ||
                     strpos($full_path, '/.') !== false ||
-                    !preg_match('/\.(html|md)$/', $filename)) {
+                    !preg_match('/\.(html|md)$/', $filename)
+                ) {
                     continue;
                 }
 
@@ -167,14 +178,16 @@ class DreamScanner {
     /**
      * Get all dream files (only for stats - still inefficient but needed for totals)
      */
-    private function getAllDreamFiles() {
+    private function getAllDreamFiles()
+    {
         return $this->scanAllDreamFiles();
     }
 
     /**
      * Get stats for admin interface
      */
-    public function getStats() {
+    public function getStats()
+    {
         $all_files = $this->getAllDreamFiles();
         $last_processed = $this->getLastProcessedFile();
 
