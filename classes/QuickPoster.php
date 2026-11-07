@@ -9,6 +9,7 @@
  */
 class QuickPoster
 {
+    // @phpstan-ignore property.uninitializedReadonly (createPost() sets it once, after the file is written; PHP allows that from inside the class)
     public readonly string $post_path;
 
     public function __construct(
