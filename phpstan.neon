@@ -1,0 +1,23 @@
+# Static analysis, run in Docker by ~/work/rob/standards-mcp/run-phpstan.sh
+# and by .githooks/pre-commit. Start level: the highest that passes today with
+# no baseline. Climbing to 10 is its own step on mg's standards page.
+parameters:
+    level: 0
+    # The PHP dreams.robnugen.com is served on today (DreamHost panel).
+    phpVersion: 80300
+    paths:
+        - classes
+        - wwwroot
+        - prepend.php
+        - Tests
+    excludePaths:
+        analyseAndScan:
+            # Per-site and gitignored; ConfigSample declares the same class.
+            - classes/Config.php (?)
+            # Codeception output, and the actor built from generated traits
+            # that a fresh clone doesn't have.
+            - Tests/_output/*
+            - Tests/Support/*
+    bootstrapFiles:
+        - vendor/autoload.php
+        - Tests/Unit/_bootstrap.php
