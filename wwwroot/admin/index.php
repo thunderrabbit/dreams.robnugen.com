@@ -45,7 +45,6 @@ if ($is_logged_in->isLoggedIn()) {
         $stmt = $mla_database->prepare("SELECT COUNT(*) FROM dreams");
         $stmt->execute();
         $total_dreams = $stmt->fetchColumn();
-
     } catch (Exception $e) {
         $error = "Error: " . $e->getMessage();
     }

@@ -6,12 +6,11 @@ preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
 include_once $matches[1] . '/prepend.php';
 
 $debugLevel = intval(value: $_GET['debug']) ?? 0;
-if($debugLevel > 0) {
+if ($debugLevel > 0) {
     echo "<pre>Debug Level: $debugLevel</pre>";
 }
 
-if($is_logged_in->isLoggedIn()){
-
+if ($is_logged_in->isLoggedIn()) {
     // Handle dream saving if form submitted
     $message = '';
     $error = '';
@@ -46,7 +45,6 @@ if($is_logged_in->isLoggedIn()){
     $page->set("error", $error);
     $page->echoToScreen();
     exit;
-
 } else {
     echo "<h1>Welcome to This Here Brand New Web Site</h1>";
     echo "<p><a href='/login/'>Click here to log in</a></p>";

@@ -7,7 +7,9 @@
  * This class handles creating and saving journal entries to the filesystem.
  * It creates Hugo-style markdown files with YAML frontmatter.
  */
-class QuickPoster{
+class QuickPoster
+{
+    // @phpstan-ignore property.uninitializedReadonly (createPost() sets it once, after the file is written; PHP allows that from inside the class)
     public readonly string $post_path;
 
     public function __construct(
@@ -22,7 +24,7 @@ class QuickPoster{
      */
     public function createPost(\Config $config, array $post_array): bool
     {
-        if($this->debug > 2){
+        if ($this->debug > 2) {
             print_rob(object: "inside createPost", exit: false);
             print_rob(object: $post_array, exit: false);
         }

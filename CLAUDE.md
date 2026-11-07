@@ -69,6 +69,30 @@ This is a minimalist PHP web application framework designed for DreamHost deploy
 - Error display enabled in `prepend.php` for development
 - Templates use `.tpl.php` extension and PHP template syntax
 
+### Checks (phpcs, PHPStan, unit tests)
+
+Dev tooling only; nothing in `vendor/` deploys. Lemur 13 has no composer, so
+fill `vendor/` with the stock image:
+
+    docker run --rm -e COMPOSER_HOME=/tmp/composer -v "$PWD":/app -w /app \
+      composer:2 composer install --no-interaction
+
+Everything runs in the `standards-codeception-runner:php8.3` image, the PHP
+DreamHost serves dreams on today:
+
+    R() { docker run --rm --network none -v "$PWD":/app -w /app standards-codeception-runner:php8.3 "$@"; }
+    R php vendor/bin/codecept build      # once per clone
+    R php vendor/bin/codecept run Unit
+    R php vendor/bin/phpcs --standard=phpcs.xml
+    R php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G
+
+- `phpcs.xml`: PSR-12; its excludes are today's leftovers, to clear later.
+- `phpstan.neon`: level 0, no baseline. Never add a baseline or lower the level.
+- Unit tests live in `Tests/Unit/`; `_bootstrap.php` loads `classes/` without
+  `prepend.php`, so no session or DB.
+- `.githooks/pre-commit` runs phpcs and PHPStan on the staged content. Switch it
+  on once per clone: `git config core.hooksPath .githooks`.
+
 ### Including prepend.php
 
 All PHP files (except templates and prepend.php itself) must include prepend.php. Use this consistent pattern regardless of directory depth:
