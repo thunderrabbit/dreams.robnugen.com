@@ -60,6 +60,7 @@ $top_keywords = [];
 $stats = [];
 $progress = [];
 $search_results = [];
+$search_term = '';
 
 if ($tables_exist) {
     try {
