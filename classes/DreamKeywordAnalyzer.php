@@ -25,7 +25,7 @@ class DreamKeywordAnalyzer
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
 
-    public function __construct($database)
+    public function __construct(\PDO $database)
     {
         $this->database = $database;
     }
@@ -156,7 +156,7 @@ class DreamKeywordAnalyzer
     /**
      * Extract meaningful keywords from dream text
      */
-    private function extractKeywords($text)
+    private function extractKeywords(string $text)
     {
         // Convert to lowercase and remove HTML tags
         $text = strtolower(strip_tags($text));
@@ -192,8 +192,11 @@ class DreamKeywordAnalyzer
 
     /**
      * Store keyword frequencies in database (for full analysis)
+     *
+     * @param array<string, int> $keyword_data frequency by keyword
+     * @param array<string, array{first: ?string, last: ?string}> $keyword_dates
      */
-    private function storeKeywords($keyword_data, $keyword_dates)
+    private function storeKeywords(array $keyword_data, array $keyword_dates)
     {
         $stmt = $this->database->prepare("
             INSERT INTO dream_keywords (keyword, frequency, first_seen, last_seen)
@@ -212,8 +215,11 @@ class DreamKeywordAnalyzer
 
     /**
      * Update keyword frequencies (for incremental analysis)
+     *
+     * @param array<string, int> $keyword_data frequency by keyword
+     * @param array<string, array{first: ?string, last: ?string}> $keyword_dates
      */
-    private function updateKeywords($keyword_data, $keyword_dates)
+    private function updateKeywords(array $keyword_data, array $keyword_dates)
     {
         foreach ($keyword_data as $keyword => $new_frequency) {
             // Try to update existing keyword
@@ -269,7 +275,7 @@ class DreamKeywordAnalyzer
     /**
      * Update analysis pointer
      */
-    private function updateAnalysisPointer($last_id, $count)
+    private function updateAnalysisPointer(int $last_id, int $count)
     {
         // Clear existing pointer and insert new one
         $this->database->exec("TRUNCATE TABLE keyword_analysis_pointer");
@@ -285,7 +291,7 @@ class DreamKeywordAnalyzer
     /**
      * Get top keywords by frequency
      */
-    public function getTopKeywords($limit = 50)
+    public function getTopKeywords(int $limit = 50)
     {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen,
@@ -301,6 +307,8 @@ class DreamKeywordAnalyzer
 
     /**
      * Search for specific keyword patterns
+     *
+     * @param string $pattern the search box text from the query string
      */
     public function searchKeywords($pattern)
     {
