@@ -86,7 +86,7 @@ DreamHost serves dreams on today:
     R php vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G
 
 - `phpcs.xml`: PSR-12; its excludes are today's leftovers, to clear later.
-- `phpstan.neon`: level 0, no baseline. Never add a baseline or lower the level.
+- `phpstan.neon`: level 1, no baseline. Never add a baseline or lower the level.
 - Unit tests live in `Tests/Unit/`; `_bootstrap.php` loads `classes/` without
   `prepend.php`, so no session or DB.
 - `.githooks/pre-commit` runs phpcs and PHPStan on the staged content. Switch it
