@@ -180,8 +180,8 @@ class DreamKeywordAnalyzer
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
         // Replace punctuation but preserve contractions
-        $text = preg_replace("/([a-z])'([a-z])/", '$1APOSTROPHE$2', $text);
-        $text = preg_replace('/[^\w\s]/', ' ', $text);
+        $text = preg_replace("/([a-z])'([a-z])/", '$1APOSTROPHE$2', $text) ?? '';
+        $text = preg_replace('/[^\w\s]/', ' ', $text) ?? '';
         $text = str_replace('APOSTROPHE', "'", $text);
 
         $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
