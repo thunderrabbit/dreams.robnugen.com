@@ -9,7 +9,7 @@ class Base
     private static ?\PDO $pdo = null;
 
     // Modern database access using native PDO interface
-    private static function initDB(\Config $config)
+    private static function initDB(\Config $config): void
     {
         /** START - Database **/
         if (empty(self::$pdo)) {
