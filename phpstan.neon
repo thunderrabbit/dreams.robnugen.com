@@ -18,6 +18,10 @@ parameters:
             # that a fresh clone doesn't have.
             - Tests/_output/*
             - Tests/Support/*
+        analyse:
+            # Vendored from Modernizing Legacy Applications in PHP: scanned
+            # for types, not analysed, since it is not ours to fix.
+            - classes/Mlaphp/*
     bootstrapFiles:
         - vendor/autoload.php
         - Tests/Unit/_bootstrap.php
