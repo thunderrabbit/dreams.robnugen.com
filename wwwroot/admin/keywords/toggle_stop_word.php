@@ -4,6 +4,13 @@
 preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
 include_once $matches[1] . '/prepend.php';
 
+/**
+ * Set by prepend.php.
+ *
+ * @var \PDO $mla_database
+ * @var \Auth\IsLoggedIn $is_logged_in
+ */
+
 if (!$is_logged_in->isLoggedIn()) {
     http_response_code(401);
     echo json_encode(['error' => 'Not logged in']);
