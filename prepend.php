@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of checks for false";
+const SENTIMENTAL_VERSION = "Dreaming of no mixed values";
 
 # write errors to screen
 ini_set('display_errors', 1);
