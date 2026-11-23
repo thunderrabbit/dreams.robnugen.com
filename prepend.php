@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of docblocks";
+const SENTIMENTAL_VERSION = "Dreaming of true docblocks";
 
 # write errors to screen
 ini_set('display_errors', 1);
