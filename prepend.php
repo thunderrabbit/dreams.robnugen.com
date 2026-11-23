@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of no implicit mixed";
+const SENTIMENTAL_VERSION = "Dreaming of string requests";
 
 # write errors to screen
 ini_set('display_errors', 1);

@@ -21,6 +21,7 @@ class PasswordRepository
     {
         $stmt = $this->pdo->prepare("SELECT `password_hash` FROM `users` WHERE `user_id` = ? LIMIT 1");
         $stmt->execute([$user_id]);
+        /** @var list<array{password_hash: string}> $result users.password_hash is VARCHAR NOT NULL */
         $result = $stmt->fetchAll();
 
         if (count($result) > 0) {

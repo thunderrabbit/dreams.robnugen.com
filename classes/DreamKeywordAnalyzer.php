@@ -52,6 +52,7 @@ class DreamKeywordAnalyzer
             ORDER BY dream_id
         ");
         $stmt->execute([$last_id]);
+        /** @var list<array{dream_id: int, content_clean: string, date_created: ?string}> $dreams */
         $dreams = $stmt->fetchAll();
 
         if (empty($dreams)) {
@@ -126,6 +127,7 @@ class DreamKeywordAnalyzer
             ORDER BY dream_id
         ");
         $stmt->execute();
+        /** @var list<array{dream_id: int, content_clean: string, date_created: ?string}> $dreams */
         $dreams = $stmt->fetchAll();
 
         $keyword_data = [];
@@ -313,7 +315,7 @@ class DreamKeywordAnalyzer
     /**
      * Get top keywords by frequency
      *
-     * @return array<int, array<string, mixed>> rows from dream_keywords
+     * @return list<array{keyword: string, frequency: int, first_seen: ?string, last_seen: ?string, span_days: ?int}> rows from dream_keywords
      */
     public function getTopKeywords(int $limit = 50): array
     {
@@ -326,14 +328,16 @@ class DreamKeywordAnalyzer
             LIMIT ?
         ");
         $stmt->execute([$limit]);
-        return $stmt->fetchAll();
+        /** @var list<array{keyword: string, frequency: int, first_seen: ?string, last_seen: ?string, span_days: ?int}> $rows */
+        $rows = $stmt->fetchAll();
+        return $rows;
     }
 
     /**
      * Search for specific keyword patterns
      *
      * @param string $pattern the search box text from the query string
-     * @return array<int, array<string, mixed>> rows from dream_keywords
+     * @return list<array{keyword: string, frequency: int, first_seen: ?string, last_seen: ?string}> rows from dream_keywords
      */
     public function searchKeywords($pattern): array
     {
@@ -344,7 +348,9 @@ class DreamKeywordAnalyzer
             ORDER BY frequency DESC
         ");
         $stmt->execute(['%' . $pattern . '%']);
-        return $stmt->fetchAll();
+        /** @var list<array{keyword: string, frequency: int, first_seen: ?string, last_seen: ?string}> $rows */
+        $rows = $stmt->fetchAll();
+        return $rows;
     }
 
     /**

@@ -22,9 +22,17 @@ class IsLoggedIn
     public function checkLogin(\Mlaphp\Request $mla_request): void
     {
         $found_user_id = 0;
-        if (!empty($mla_request->cookie[$this->di_config->cookie_name])) {
+        // Request values are kept only when they are strings; anything else
+        // counts as missing.
+        $cookie = $mla_request->cookie[$this->di_config->cookie_name] ?? '';
+        $cookie = is_string($cookie) ? $cookie : '';
+        $username = $mla_request->post['username'] ?? '';
+        $username = is_string($username) ? $username : '';
+        $password = $mla_request->post['pass'] ?? '';
+        $password = is_string($password) ? $password : '';
+        if (!empty($cookie)) {
             $found_user_id = $this->getUserIdForCookieInDatabase(
-                cookie: $mla_request->cookie[$this->di_config->cookie_name],
+                cookie: $cookie,
                 ip_address: self::serverString('REMOTE_ADDR'),
                 user_agent: self::serverString('HTTP_USER_AGENT')
             );
@@ -34,8 +42,8 @@ class IsLoggedIn
             } else {
                 $this->who_is_logged_in = $found_user_id;
             }
-        } elseif (!empty($mla_request->post['username']) && !empty($mla_request->post['pass'])) {
-            $found_user_id = $this->checkPHPHashedPassword($mla_request->post['username'], $mla_request->post['pass']);
+        } elseif (!empty($username) && !empty($password)) {
+            $found_user_id = $this->checkPHPHashedPassword($username, $password);
             if (empty($found_user_id)) {
                 $this->killCookie();        // bad login, so kill any cookie
                 $this->who_is_logged_in = 0;
@@ -59,10 +67,11 @@ class IsLoggedIn
         // set the session variable for username
         $stmt = $this->di_pdo->prepare("SELECT `username` FROM `users` WHERE `user_id` = ? LIMIT 1");
         $stmt->execute([$user_id]);
+        /** @var list<array{username: string}> $result users.username is VARCHAR NOT NULL */
         $result = $stmt->fetchAll();
 
         if (count($result) > 0) {
-            $this->loggedInUsername = $result[0]['username'] ?? 'ummmmmm wtf';
+            $this->loggedInUsername = $result[0]['username'];
         }
     }
 
@@ -119,6 +128,7 @@ class IsLoggedIn
         // get password hash
         $stmt = $this->di_pdo->prepare("SELECT `user_id`, `password_hash` FROM `users` WHERE LOWER(`username`) = LOWER(?) LIMIT 1");
         $stmt->execute([$username]);
+        /** @var list<array{user_id: int, password_hash: string}> $result */
         $result = $stmt->fetchAll();
 
         if (count($result) > 0) {
@@ -162,6 +172,7 @@ class IsLoggedIn
         $varbinary_ip = \Auth\IPBin::ipToBinary($ip_address);
         $stmt = $this->di_pdo->prepare("SELECT `user_id` FROM `cookies` WHERE `cookie` = ? AND `ip_address` = ? AND `user_agent_md5` = ? LIMIT 1");
         $stmt->execute([hash('sha256', $cookie), $varbinary_ip, md5($user_agent)]);
+        /** @var list<array{user_id: int}> $result cookies.user_id is INT UNSIGNED NOT NULL */
         $result = $stmt->fetchAll();
 
         if (count($result) > 0) {
