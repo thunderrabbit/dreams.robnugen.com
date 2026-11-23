@@ -36,9 +36,8 @@ This is a minimalist PHP web application framework designed for DreamHost deploy
 
 ### Deployment
 
-- Uses `scp_files_to_dh.sh` for automatic file watching and deployment to DreamHost
-- Script monitors file changes and syncs to remote server via SSH/SCP
-- Target configured for user "barefoot_rob" on "drc" host
+- Run `./deploy_dreams_to_dh.sh`: it pushes the current branch to origin, then runs `git pull` in `dreams.robnugen.com` on the ssh alias `quick`
+- The server copy is a git checkout; the script runs `git restore .` there first, so `classes/Config.php` stays gitignored
 
 ### Initial Setup
 
