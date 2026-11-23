@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Rector\Config\RectorConfig;
 use Rector\Php81\Rector\Array_\ArrayToFirstClassCallableRector;
 use Rector\Set\ValueObject\LevelSetList;
+use Rector\Set\ValueObject\SetList;
 
 // Same paths as phpcs.xml. Target is the PHP DreamHost serves dreams on.
 return RectorConfig::configure()
@@ -29,4 +30,4 @@ return RectorConfig::configure()
             __DIR__ . '/wwwroot/login/register_admin.php',
         ],
     ])
-    ->withSets([LevelSetList::UP_TO_PHP_83]);
+    ->withSets([LevelSetList::UP_TO_PHP_83, SetList::TYPE_DECLARATION]);
