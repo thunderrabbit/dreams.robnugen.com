@@ -25,7 +25,7 @@
     </rule>
 
     <!-- prepend.php is the bootstrap every page includes: it sets up the
-         request and also declares print_rob(). EDatabaseExceptions.php's
+         request. EDatabaseExceptions.php's
          stray semicolons count as statements; it drops off with them. -->
     <rule ref="PSR1.Files.SideEffects">
         <exclude-pattern>*/prepend.php</exclude-pattern>

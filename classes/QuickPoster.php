@@ -36,8 +36,8 @@ class QuickPoster
     public function createPost(\Config $config, array $post_array): bool
     {
         if ($this->debug > 2) {
-            print_rob(object: "inside createPost", exit: false);
-            print_rob(object: $post_array, exit: false);
+            \PrintRob\Debug::printRob(object: "inside createPost", exit: false);
+            \PrintRob\Debug::printRob(object: $post_array, exit: false);
         }
 
         /* $post_array = Array

@@ -64,7 +64,7 @@ This is a minimalist PHP web application framework designed for DreamHost deploy
 
 - No package manager (composer/npm) - pure PHP with custom autoloader
 - Debug mode available via `?debug=1` URL parameter
-- Uses `print_rob()` function for debugging output
+- Uses `\PrintRob\Debug::printRob()` for debugging output
 - Error display enabled in `prepend.php` for development
 - Templates use `.tpl.php` extension and PHP template syntax
 

@@ -15,20 +15,6 @@ spl_autoload_register([$autoloader, 'load']);
 
 $mla_request = new \Mlaphp\Request();
 
-function print_rob(mixed $object, bool $exit = true): void
-{
-    echo "<pre>";
-    if (is_object($object) && method_exists($object, "toArray")) {
-        echo "ResultSet => " . print_r($object->toArray(), true);
-    } else {
-        print_r($object);
-    }
-    echo "</pre>";
-    if ($exit) {
-        exit;
-    }
-}
-
 $config = new \Config();
 
 $mla_database = \Database\Base::getPDO($config);
