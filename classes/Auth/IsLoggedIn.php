@@ -101,6 +101,9 @@ class IsLoggedIn
 
 
 
+    /**
+     * @param string $username from the login form's POST
+     */
     private function getIDandPHPHashedPasswordForUsername($username)
     {
         // get password hash
@@ -116,8 +119,8 @@ class IsLoggedIn
     }
     /**
      * Looks up hashed password for username, and checks it against the password provided
-     * @param $username
-     * @param $password
+     * @param string $username from the login form's POST
+     * @param string $password from the login form's POST
      * @return int
      */
     private function checkPHPHashedPassword($username, $password): int
