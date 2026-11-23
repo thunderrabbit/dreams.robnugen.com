@@ -58,6 +58,9 @@ class QuickPoster
             mkdir(directory: $dir, permissions: 0755, recursive: true);
         }
         $file = fopen(filename: $file_path, mode: "w");
+        if ($file === false) {
+            return false;
+        }
         // write time and date at top of the file
         fwrite(stream: $file, data: $frontmatter);
         fwrite(stream: $file, data: "\n");
