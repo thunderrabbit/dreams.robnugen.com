@@ -2,10 +2,10 @@
 
 class DreamKeywordAnalyzer
 {
-    private $database;
+    private \PDO $database;
 
-    // Common English stop words to filter out
-    private $stop_words = [
+    /** @var list<string> Common English stop words to filter out */
+    private array $stop_words = [
         'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
         'a', 'an', 'as', 'are', 'was', 'were', 'been', 'be', 'have', 'has', 'had',
         'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might',
@@ -19,21 +19,28 @@ class DreamKeywordAnalyzer
         'like', 'look', 'feel', 'seem', 'find', 'give', 'put', 'use', 'work', 'call'
     ];
 
-    // HTML entity remnants to filter out
-    private $html_entities = [
+    /** @var list<string> HTML entity remnants to filter out */
+    private array $html_entities = [
         'quot', 'amp', 'lt', 'gt', 'nbsp', 'copy', 'reg', 'trade', 'hellip', 'mdash', 'ndash',
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
 
-    public function __construct($database)
+    public function __construct(\PDO $database)
     {
         $this->database = $database;
     }
 
     /**
      * Analyze only new dreams since last analysis
+     *
+     * @return array{
+     *     total_dreams_processed: int,
+     *     unique_keywords_found: int,
+     *     total_keyword_instances: int,
+     *     message?: string
+     * }
      */
-    public function analyzeNewDreams()
+    public function analyzeNewDreams(): array
     {
         $last_id = $this->getLastAnalyzedId();
 
@@ -98,8 +105,14 @@ class DreamKeywordAnalyzer
 
     /**
      * Analyze all dreams (full reanalysis)
+     *
+     * @return array{
+     *     total_dreams_processed: int,
+     *     unique_keywords_found: int,
+     *     total_keyword_instances: int
+     * }
      */
-    public function analyzeAllDreams()
+    public function analyzeAllDreams(): array
     {
         // Clear existing keyword data
         $this->database->exec("TRUNCATE TABLE dream_keywords");
@@ -155,8 +168,10 @@ class DreamKeywordAnalyzer
 
     /**
      * Extract meaningful keywords from dream text
+     *
+     * @return list<string> one entry per occurrence
      */
-    private function extractKeywords($text)
+    private function extractKeywords(string $text): array
     {
         // Convert to lowercase and remove HTML tags
         $text = strtolower(strip_tags($text));
@@ -192,8 +207,11 @@ class DreamKeywordAnalyzer
 
     /**
      * Store keyword frequencies in database (for full analysis)
+     *
+     * @param array<string, int> $keyword_data frequency by keyword
+     * @param array<string, array{first: ?string, last: ?string}> $keyword_dates
      */
-    private function storeKeywords($keyword_data, $keyword_dates)
+    private function storeKeywords(array $keyword_data, array $keyword_dates): void
     {
         $stmt = $this->database->prepare("
             INSERT INTO dream_keywords (keyword, frequency, first_seen, last_seen)
@@ -212,8 +230,11 @@ class DreamKeywordAnalyzer
 
     /**
      * Update keyword frequencies (for incremental analysis)
+     *
+     * @param array<string, int> $keyword_data frequency by keyword
+     * @param array<string, array{first: ?string, last: ?string}> $keyword_dates
      */
-    private function updateKeywords($keyword_data, $keyword_dates)
+    private function updateKeywords(array $keyword_data, array $keyword_dates): void
     {
         foreach ($keyword_data as $keyword => $new_frequency) {
             // Try to update existing keyword
@@ -252,8 +273,10 @@ class DreamKeywordAnalyzer
 
     /**
      * Get last analyzed dream ID
+     *
+     * @return ?int the column allows NULL; 0 when no analysis has run
      */
-    private function getLastAnalyzedId()
+    private function getLastAnalyzedId(): ?int
     {
         $stmt = $this->database->query("
             SELECT last_analyzed_dream_id
@@ -269,7 +292,7 @@ class DreamKeywordAnalyzer
     /**
      * Update analysis pointer
      */
-    private function updateAnalysisPointer($last_id, $count)
+    private function updateAnalysisPointer(int $last_id, int $count): void
     {
         // Clear existing pointer and insert new one
         $this->database->exec("TRUNCATE TABLE keyword_analysis_pointer");
@@ -284,8 +307,10 @@ class DreamKeywordAnalyzer
 
     /**
      * Get top keywords by frequency
+     *
+     * @return list<array<string, mixed>> rows from dream_keywords
      */
-    public function getTopKeywords($limit = 50)
+    public function getTopKeywords(int $limit = 50): array
     {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen,
@@ -301,8 +326,11 @@ class DreamKeywordAnalyzer
 
     /**
      * Search for specific keyword patterns
+     *
+     * @param string $pattern the search box text from the query string
+     * @return list<array<string, mixed>> rows from dream_keywords
      */
-    public function searchKeywords($pattern)
+    public function searchKeywords($pattern): array
     {
         $stmt = $this->database->prepare("
             SELECT keyword, frequency, first_seen, last_seen
@@ -316,8 +344,10 @@ class DreamKeywordAnalyzer
 
     /**
      * Get keyword statistics
+     *
+     * @return array<string, mixed>|false the totals row, or false if the query gives none
      */
-    public function getKeywordStats()
+    public function getKeywordStats(): array|false
     {
         $stmt = $this->database->query("
             SELECT
@@ -335,8 +365,16 @@ class DreamKeywordAnalyzer
 
     /**
      * Get analysis progress info
+     *
+     * @return array{
+     *     last_analyzed_id: mixed,
+     *     total_dreams: mixed,
+     *     remaining_dreams: mixed,
+     *     last_analysis_date: mixed,
+     *     max_dream_id: mixed
+     * }
      */
-    public function getAnalysisProgress()
+    public function getAnalysisProgress(): array
     {
         $pointer_stmt = $this->database->query("
             SELECT last_analyzed_dream_id, last_analysis_date, total_dreams_analyzed
@@ -383,8 +421,10 @@ class DreamKeywordAnalyzer
     /**
      * Populate the keywords_2_dreams junction table by re-analyzing all dreams
      * This creates the many-to-many relationships between keywords and dreams
+     *
+     * @return array{dreams_processed: int, links_created: int}
      */
-    public function populateJunctionTable()
+    public function populateJunctionTable(): array
     {
         // Clear existing junction data
         $this->database->query("TRUNCATE TABLE keywords_2_dreams");

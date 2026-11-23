@@ -2,17 +2,25 @@
 
 class DreamImporter
 {
-    private $pdo;
+    private \PDO $pdo;
 
-    public function __construct($pdo)
+    public function __construct(\PDO $pdo)
     {
         $this->pdo = $pdo;
     }
 
     /**
      * Import a batch of dream files to database
+     *
+     * @param list<string> $file_paths
+     * @return array{
+     *     imported: int,
+     *     skipped: int,
+     *     errors: list<string>,
+     *     last_successful_file: ?string
+     * }
      */
-    public function importBatch($file_paths)
+    public function importBatch(array $file_paths): array
     {
         $results = [
             'imported' => 0,
@@ -43,8 +51,10 @@ class DreamImporter
 
     /**
      * Import a single dream file
+     *
+     * @return 'imported'|'skipped'
      */
-    private function importSingleFile($file_path)
+    private function importSingleFile(string $file_path): string
     {
         // Check if already imported
         if ($this->isAlreadyImported($file_path)) {
@@ -66,7 +76,7 @@ class DreamImporter
     /**
      * Check if file already exists in database
      */
-    private function isAlreadyImported($file_path)
+    private function isAlreadyImported(string $file_path): bool
     {
         $stmt = $this->pdo->prepare("SELECT dream_id FROM dreams WHERE file_path = ?");
         $stmt->execute([$file_path]);
@@ -75,8 +85,19 @@ class DreamImporter
 
     /**
      * Parse dream file and extract metadata
+     *
+     * @return array{
+     *     filename: string,
+     *     file_path: string,
+     *     date_created: ?string,
+     *     title: string,
+     *     content_raw: string,
+     *     content_clean: string,
+     *     word_count: int,
+     *     char_count: int
+     * }|false false when the file is missing or unreadable
      */
-    private function parseFile($file_path)
+    private function parseFile(string $file_path): array|false
     {
         if (!file_exists($file_path)) {
             return false;
@@ -114,7 +135,7 @@ class DreamImporter
     /**
      * Extract date from file path like /path/YYYY/MM/DDtitle.ext
      */
-    private function extractDateFromPath($file_path)
+    private function extractDateFromPath(string $file_path): ?string
     {
         // Match pattern: /YYYY/MM/DDsomething
         if (preg_match('#/(\d{4})/(\d{2})/(\d{2})#', $file_path, $matches)) {
@@ -129,7 +150,7 @@ class DreamImporter
     /**
      * Extract title from filename like "DDtitle.ext"
      */
-    private function extractTitleFromFilename($filename)
+    private function extractTitleFromFilename(string $filename): string
     {
         // Remove extension
         $title = pathinfo($filename, PATHINFO_FILENAME);
@@ -147,7 +168,7 @@ class DreamImporter
     /**
      * Clean content for analysis
      */
-    private function cleanContent($content)
+    private function cleanContent(string $content): string
     {
         // Strip HTML/markdown frontmatter if present
         $content = preg_replace('/^---.*?---\s*/s', '', $content);
@@ -163,8 +184,19 @@ class DreamImporter
 
     /**
      * Insert dream into database
+     *
+     * @param array{
+     *     filename: string,
+     *     file_path: string,
+     *     date_created: ?string,
+     *     title: string,
+     *     content_raw: string,
+     *     content_clean: string,
+     *     word_count: int,
+     *     char_count: int
+     * } $dream_data
      */
-    private function insertDream($dream_data)
+    private function insertDream(array $dream_data): void
     {
         $sql = "INSERT INTO dreams (
             filename, file_path, date_created, title,

@@ -19,7 +19,7 @@ class QuickPoster
 
     /**
      * Create a post
-     * @param array $post_array
+     * @param array<mixed> $post_array the form's POST fields, as \$_POST gives them
      * @return bool true if post was created
      */
     public function createPost(\Config $config, array $post_array): bool

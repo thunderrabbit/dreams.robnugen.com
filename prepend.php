@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of declared types";
+const SENTIMENTAL_VERSION = "Dreaming of what arrays hold";
 
 # write errors to screen
 ini_set('display_errors', 1);
@@ -15,7 +15,7 @@ spl_autoload_register(array($autoloader, 'load'));
 
 $mla_request = new \Mlaphp\Request();
 
-function print_rob($object, $exit = true)
+function print_rob(mixed $object, bool $exit = true): void
 {
     echo "<pre>";
     if (is_object($object) && method_exists($object, "toArray")) {

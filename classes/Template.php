@@ -2,12 +2,10 @@
 
 class Template
 {
-    protected $template_location;
+    protected string $template_location;
 
-    protected $vars;
-
-    protected $mla_request;      // Encapsulates superglobals e.g. $SESSION, $REQUEST, etc (misspelled in this comment to keep searches clean)
-    protected $di_dbase;
+    /** @var array<string, mixed> template variables by name */
+    protected array $vars;
 
     public function __construct(\Config $config)
     {
@@ -16,7 +14,7 @@ class Template
         $this->vars = [];
     }
 
-    public function setTemplate($template_file)
+    public function setTemplate(string $template_file): void
     {
         $this->template_location = $this->template_location . "/" . $template_file;
     }
@@ -55,10 +53,6 @@ class Template
         extract($this->vars);           // Extract the vars to local namespace
 
         ob_start();                     // Start output buffering
-
-        if (!isset($this->template_location)) {
-            echo "No template file provided";
-        }
 
         include($this->template_location);  // Include the file
 

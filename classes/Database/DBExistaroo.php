@@ -4,7 +4,8 @@ namespace Database;
 
 class DBExistaroo
 {
-    private $automaticSchemaPrefixes = [
+    /** @var list<string> schema prefixes applied without asking */
+    private array $automaticSchemaPrefixes = [
         "00",
         "01",
     ];
@@ -24,6 +25,9 @@ class DBExistaroo
     ) {
     }
 
+    /**
+     * @return list<string> what needs attention; empty when all is well
+     */
     public function checkaroo(): array
     {
         $errors = [];
@@ -137,6 +141,9 @@ class DBExistaroo
         return count($stmt->fetchAll()) > 0;
     }
 
+    /**
+     * @return list<string> "<version dir>/<create file>" for each unapplied file
+     */
     public function getPendingMigrations(): array
     {
         $pending = [];
@@ -167,6 +174,9 @@ class DBExistaroo
         return $pending;
     }
 
+    /**
+     * @return list<string> applied_version values, a VARCHAR NOT NULL column
+     */
     private function getAppliedVersions(): array
     {
         $versions = [];
