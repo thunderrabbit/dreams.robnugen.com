@@ -4,7 +4,8 @@ namespace Database;
 
 class DBExistaroo
 {
-    private $automaticSchemaPrefixes = [
+    /** @var list<string> schema prefixes applied without asking */
+    private array $automaticSchemaPrefixes = [
         "00",
         "01",
     ];
