@@ -5,6 +5,14 @@
 preg_match('#^(/home/[^/]+/[^/]+)#', __DIR__, $matches);
 include_once $matches[1] . '/prepend.php';
 
+/**
+ * Set by prepend.php.
+ *
+ * @var \Config $config
+ * @var \PDO $mla_database
+ * @var \Auth\IsLoggedIn $is_logged_in
+ */
+
 // Check if user is logged in
 if (!$is_logged_in->isLoggedIn()) {
     header("Location: /login/");
