@@ -185,6 +185,7 @@ class DBExistaroo
         $versions = [];
         $stmt = $this->pdo->prepare("SELECT applied_version FROM applied_DB_versions");
         $stmt->execute();
+        /** @var list<array{applied_version: string}> $results */
         $results = $stmt->fetchAll();
 
         foreach ($results as $row) {
