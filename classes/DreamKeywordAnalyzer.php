@@ -287,7 +287,11 @@ class DreamKeywordAnalyzer
         $stmt->execute();
 
         $result = $stmt->fetch();
-        return $result ? $result['last_analyzed_dream_id'] : 0;
+        if (!is_array($result)) {
+            return 0;
+        }
+        $last_id = $result['last_analyzed_dream_id'];
+        return is_int($last_id) ? $last_id : null;
     }
 
     /**
@@ -362,7 +366,8 @@ class DreamKeywordAnalyzer
             WHERE is_stop_word = 0
         ");
         $stmt->execute();
-        return $stmt->fetch();
+        $stats = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return is_array($stats) ? $stats : false;
     }
 
     /**
@@ -394,8 +399,12 @@ class DreamKeywordAnalyzer
         ");
         $total_stmt->execute();
         $totals = $total_stmt->fetch();
+        if (!is_array($totals)) {
+            // COUNT(*) with no GROUP BY always gives one row.
+            throw new \RuntimeException("Counting dreams gave no row");
+        }
 
-        if (!$pointer) {
+        if (!is_array($pointer)) {
             return [
                 'last_analyzed_id' => 0,
                 'total_dreams' => $totals['total_dreams'],
@@ -412,6 +421,10 @@ class DreamKeywordAnalyzer
         ");
         $remaining_stmt->execute([$pointer['last_analyzed_dream_id']]);
         $remaining = $remaining_stmt->fetch();
+        if (!is_array($remaining)) {
+            // COUNT(*) with no GROUP BY always gives one row.
+            throw new \RuntimeException("Counting remaining dreams gave no row");
+        }
 
         return [
             'last_analyzed_id' => $pointer['last_analyzed_dream_id'],
@@ -445,11 +458,12 @@ class DreamKeywordAnalyzer
         $total_dreams = 0;
         $total_links = 0;
 
-        while ($dream = $dreams_stmt->fetch()) {
+        while (is_array($dream = $dreams_stmt->fetch())) {
             $total_dreams++;
 
-            // Extract keywords from this dream's content
-            $keywords = $this->extractKeywords($dream['content_clean']);
+            // Extract keywords from this dream's content; the WHERE above
+            // keeps only rows whose content_clean is a string.
+            $keywords = is_string($dream['content_clean']) ? $this->extractKeywords($dream['content_clean']) : [];
 
             foreach ($keywords as $keyword => $count) {
                 // Get the dream_keyword_id for this keyword
@@ -459,7 +473,7 @@ class DreamKeywordAnalyzer
                 $keyword_stmt->execute([$keyword]);
                 $keyword_row = $keyword_stmt->fetch();
 
-                if ($keyword_row) {
+                if (is_array($keyword_row)) {
                     // Insert into junction table
                     $junction_stmt = $this->database->prepare("
                         INSERT INTO keywords_2_dreams (dream_keyword_id, dream_id, occurrence_count)

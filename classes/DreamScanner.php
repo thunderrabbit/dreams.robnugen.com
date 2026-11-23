@@ -155,7 +155,7 @@ class DreamScanner
         );
 
         foreach ($iterator as $file) {
-            if ($file->isFile()) {
+            if ($file instanceof SplFileInfo && $file->isFile()) {
                 $filename = $file->getFilename();
                 $full_path = $file->getPathname();
 

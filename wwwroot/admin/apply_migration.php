@@ -21,16 +21,17 @@ if (!$is_logged_in->isLoggedIn()) {
 
 $body = file_get_contents("php://input");
 $input = $body === false ? null : json_decode($body, true);
+$migration = is_array($input) ? ($input['migration'] ?? null) : null;
 
-if (empty($input['migration'])) {
+if (!is_string($migration) || empty($migration)) {
     http_response_code(400);
     echo json_encode(["error" => "Missing migration identifier"]);
     exit;
 }
 
 try {
-    $dbExistaroo->applyMigration($input['migration']);
-    echo json_encode(["status" => "success", "applied" => $input['migration']]);
+    $dbExistaroo->applyMigration($migration);
+    echo json_encode(["status" => "success", "applied" => $migration]);
 } catch (\Exception $e) {
     http_response_code(500);
     echo json_encode(["error" => $e->getMessage()]);
