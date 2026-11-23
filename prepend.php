@@ -15,7 +15,7 @@ spl_autoload_register(array($autoloader, 'load'));
 
 $mla_request = new \Mlaphp\Request();
 
-function print_rob(mixed $object, bool $exit = true)
+function print_rob(mixed $object, bool $exit = true): void
 {
     echo "<pre>";
     if (is_object($object) && method_exists($object, "toArray")) {
