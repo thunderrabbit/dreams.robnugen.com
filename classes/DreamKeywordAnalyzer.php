@@ -308,7 +308,7 @@ class DreamKeywordAnalyzer
     /**
      * Get top keywords by frequency
      *
-     * @return list<array<string, mixed>> rows from dream_keywords
+     * @return array<int, array<string, mixed>> rows from dream_keywords
      */
     public function getTopKeywords(int $limit = 50): array
     {
@@ -328,7 +328,7 @@ class DreamKeywordAnalyzer
      * Search for specific keyword patterns
      *
      * @param string $pattern the search box text from the query string
-     * @return list<array<string, mixed>> rows from dream_keywords
+     * @return array<int, array<string, mixed>> rows from dream_keywords
      */
     public function searchKeywords($pattern): array
     {
