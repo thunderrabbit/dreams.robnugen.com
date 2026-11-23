@@ -112,12 +112,11 @@ class Base
         );
 
         foreach ($statements as $statement) {
-            if (!empty($statement)) {
-                try {
-                    $pdo->exec($statement);
-                } catch (\PDOException $e) {
-                    throw new \Database\EDatabaseException("Error executing statement: $statement. Error: " . $e->getMessage());
-                }
+            // array_filter above already dropped the empty ones.
+            try {
+                $pdo->exec($statement);
+            } catch (\PDOException $e) {
+                throw new \Database\EDatabaseException("Error executing statement: $statement. Error: " . $e->getMessage());
             }
         }
     }
