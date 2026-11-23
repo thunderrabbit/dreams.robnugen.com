@@ -2,10 +2,10 @@
 
 class DreamKeywordAnalyzer
 {
-    private $database;
+    private \PDO $database;
 
-    // Common English stop words to filter out
-    private $stop_words = [
+    /** @var list<string> Common English stop words to filter out */
+    private array $stop_words = [
         'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
         'a', 'an', 'as', 'are', 'was', 'were', 'been', 'be', 'have', 'has', 'had',
         'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might',
@@ -19,8 +19,8 @@ class DreamKeywordAnalyzer
         'like', 'look', 'feel', 'seem', 'find', 'give', 'put', 'use', 'work', 'call'
     ];
 
-    // HTML entity remnants to filter out
-    private $html_entities = [
+    /** @var list<string> HTML entity remnants to filter out */
+    private array $html_entities = [
         'quot', 'amp', 'lt', 'gt', 'nbsp', 'copy', 'reg', 'trade', 'hellip', 'mdash', 'ndash',
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
