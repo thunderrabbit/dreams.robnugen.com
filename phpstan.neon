@@ -2,7 +2,7 @@
 # and by .githooks/pre-commit. Start level: the highest that passes today with
 # no baseline. Climbing to 10 is its own step on mg's standards page.
 parameters:
-    level: 6
+    level: 8
     # The PHP dreams.robnugen.com is served on today (DreamHost panel).
     phpVersion: 80300
     paths:
@@ -22,6 +22,12 @@ parameters:
             # Vendored from Modernizing Legacy Applications in PHP: scanned
             # for types, not analysed, since it is not ours to fix.
             - classes/Mlaphp/*
+    ignoreErrors:
+        # Every entry script finds the project root by matching DreamHost's
+        # /home/<user>/<domain> path (see CLAUDE.md), which always matches there.
+        -
+            message: '#^Offset 1 might not exist on array\{\}\|array\{non-falsy-string, non-falsy-string\}\.$#'
+            path: wwwroot/*
     bootstrapFiles:
         - vendor/autoload.php
         - Tests/Unit/_bootstrap.php

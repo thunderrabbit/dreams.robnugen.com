@@ -58,6 +58,9 @@ class QuickPoster
             mkdir(directory: $dir, permissions: 0755, recursive: true);
         }
         $file = fopen(filename: $file_path, mode: "w");
+        if ($file === false) {
+            return false;
+        }
         // write time and date at top of the file
         fwrite(stream: $file, data: $frontmatter);
         fwrite(stream: $file, data: "\n");
@@ -109,13 +112,13 @@ class QuickPoster
     private function createUrlTitle(string $title): string
     {
         // remove single quotes so I'm and It's don't become I-m and It-s
-        $url_title = preg_replace(pattern: "/'/", replacement: "", subject: $title);
+        $url_title = preg_replace(pattern: "/'/", replacement: "", subject: $title) ?? "";
 
         // replace "?' " with "-"
-        $url_title = preg_replace(pattern: "/[^a-zA-Z0-9\w]/", replacement: "-", subject: $url_title);
+        $url_title = preg_replace(pattern: "/[^a-zA-Z0-9\w]/", replacement: "-", subject: $url_title) ?? "";
 
         // replace multiple hyphens with a single hyphen
-        $url_title = preg_replace(pattern: "/-+/", replacement: "-", subject: $url_title);
+        $url_title = preg_replace(pattern: "/-+/", replacement: "-", subject: $url_title) ?? "";
 
         // remove leading and trailing hyphens
         $url_title = trim(string: $url_title, characters: "-");

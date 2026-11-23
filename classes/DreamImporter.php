@@ -156,7 +156,7 @@ class DreamImporter
         $title = pathinfo($filename, PATHINFO_FILENAME);
 
         // Remove date prefix (DD at start)
-        $title = preg_replace('/^\d{2}/', '', $title);
+        $title = preg_replace('/^\d{2}/', '', $title) ?? '';
 
         // Convert underscores to spaces
         $title = str_replace('_', ' ', $title);
@@ -171,13 +171,13 @@ class DreamImporter
     private function cleanContent(string $content): string
     {
         // Strip HTML/markdown frontmatter if present
-        $content = preg_replace('/^---.*?---\s*/s', '', $content);
+        $content = preg_replace('/^---.*?---\s*/s', '', $content) ?? '';
 
         // Strip HTML tags
         $content = strip_tags($content);
 
         // Normalize whitespace
-        $content = preg_replace('/\s+/', ' ', $content);
+        $content = preg_replace('/\s+/', ' ', $content) ?? '';
 
         return trim($content);
     }
