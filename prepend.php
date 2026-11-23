@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of string requests";
+const SENTIMENTAL_VERSION = "Dreaming of modern PHP";
 
 # write errors to screen
 ini_set('display_errors', 1);
