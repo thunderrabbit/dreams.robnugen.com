@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of typed returns";
+const SENTIMENTAL_VERSION = "Dreaming of what arrays hold";
 
 # write errors to screen
 ini_set('display_errors', 1);
