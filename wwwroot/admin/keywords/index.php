@@ -90,7 +90,7 @@ $template = new Template(config: $config);
 $template->setTemplate("admin/keywords/index.tpl.php");
 $template->set("top_keywords", $top_keywords);
 $template->set("stats", $stats);
-$template->set("progress", $progress ?? []);
+$template->set("progress", $progress);
 $template->set("search_term", $search_term);
 $template->set("search_results", $search_results);
 $template->set("message", $message);
