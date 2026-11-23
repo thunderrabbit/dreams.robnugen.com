@@ -2,8 +2,6 @@
 
 class DreamKeywordAnalyzer
 {
-    private \PDO $database;
-
     /** @var list<string> Common English stop words to filter out */
     private array $stop_words = [
         'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by',
@@ -25,9 +23,8 @@ class DreamKeywordAnalyzer
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
 
-    public function __construct(\PDO $database)
+    public function __construct(private readonly \PDO $database)
     {
-        $this->database = $database;
     }
 
     /**

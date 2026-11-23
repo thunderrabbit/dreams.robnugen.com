@@ -2,9 +2,9 @@
 
 class DreamScanner
 {
-    private string $journal_base;
-    private string $pointer_file;
-    private string $failed_files;
+    private readonly string $journal_base;
+    private readonly string $pointer_file;
+    private readonly string $failed_files;
 
     public function __construct(Config $config)
     {
@@ -83,7 +83,7 @@ class DreamScanner
         if ($contents === false) {
             return [];
         }
-        return array_filter(array_map('trim', explode("\n", $contents)));
+        return array_filter(array_map(trim(...), explode("\n", $contents)));
     }
 
     /**
@@ -161,8 +161,8 @@ class DreamScanner
 
                 // Skip system files and directories
                 if (
-                    strpos($full_path, '/.git/') !== false ||
-                    strpos($full_path, '/.') !== false ||
+                    str_contains($full_path, '/.git/') ||
+                    str_contains($full_path, '/.') ||
                     !preg_match('/\.(html|md)$/', $filename)
                 ) {
                     continue;
