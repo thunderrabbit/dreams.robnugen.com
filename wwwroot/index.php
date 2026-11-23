@@ -13,7 +13,7 @@ include_once $matches[1] . '/prepend.php';
  * @var \Mlaphp\Request $mla_request
  */
 
-$debugLevel = intval(value: $_GET['debug']) ?? 0;
+$debugLevel = intval(value: $_GET['debug'] ?? 0);
 if ($debugLevel > 0) {
     echo "<pre>Debug Level: $debugLevel</pre>";
 }
