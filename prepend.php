@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of typed properties";
+const SENTIMENTAL_VERSION = "Dreaming of typed parameters";
 
 # write errors to screen
 ini_set('display_errors', 1);
