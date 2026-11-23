@@ -18,6 +18,17 @@ class QuickPoster
     }
 
     /**
+     * One POST field as a string; '' when it is missing or not a string.
+     *
+     * @param array<mixed> $post_array the form's POST fields
+     */
+    private function postString(array $post_array, string $key): string
+    {
+        $value = $post_array[$key] ?? '';
+        return is_string($value) ? $value : '';
+    }
+
+    /**
      * Create a post
      * @param array<mixed> $post_array the form's POST fields, as \$_POST gives them
      * @return bool true if post was created
@@ -41,12 +52,13 @@ class QuickPoster
     Just a simple matter of programming!
 ) */
         // Parse the date and time
-        $date = $post_array['date'];
-        $time = $post_array['time'];
-        $title = $post_array['title'];
-        $tags = $post_array['tags'];
+        $date = $this->postString($post_array, 'date');
+        $time = $this->postString($post_array, 'time');
+        $title = $this->postString($post_array, 'title');
+        $tags = $this->postString($post_array, 'tags');
+        $post_content = $this->postString($post_array, 'post_content');
         // remove ^M from the end of the lines of the content
-        $content = preg_replace(pattern: "/\r/", replacement: "", subject: $post_array['post_content']);
+        $content = preg_replace(pattern: "/\r/", replacement: "", subject: $post_content) ?? "";
 
         $file_path = $this->createFilePath(title: $title, date: $date, config: $config);
 
