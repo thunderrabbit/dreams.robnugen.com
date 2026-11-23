@@ -2,9 +2,9 @@
 
 class DreamScanner
 {
-    private $journal_base;
-    private $pointer_file;
-    private $failed_files;
+    private string $journal_base;
+    private string $pointer_file;
+    private string $failed_files;
 
     public function __construct(Config $config)
     {
