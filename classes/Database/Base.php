@@ -62,6 +62,9 @@ class Base
     public static function getPDO(\Config $config): \PDO
     {
         self::initDB($config);
+        if (self::$pdo === null) {
+            throw new \Database\EDatabaseException("No database connection after initDB().");
+        }
         return self::$pdo;
     }
 
