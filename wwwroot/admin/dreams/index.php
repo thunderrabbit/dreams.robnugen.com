@@ -18,7 +18,6 @@ if (!$is_logged_in->isLoggedIn()) {
 }
 
 $template = new Template(config: $config);
-$template->page_title = "Dreams Import";
 
 // Initialize scanner
 $scanner = new DreamScanner($config);
