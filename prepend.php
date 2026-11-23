@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of narrowed unions";
+const SENTIMENTAL_VERSION = "Dreaming of checks for false";
 
 # write errors to screen
 ini_set('display_errors', 1);
