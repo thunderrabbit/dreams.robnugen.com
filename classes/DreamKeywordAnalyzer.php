@@ -23,7 +23,7 @@ class DreamKeywordAnalyzer
         'laquo', 'raquo', 'ldquo', 'rdquo', 'lsquo', 'rsquo', 'bull', 'middot', 'deg'
     ];
 
-    public function __construct(private \PDO $database)
+    public function __construct(private readonly \PDO $database)
     {
     }
 

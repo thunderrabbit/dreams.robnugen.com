@@ -13,7 +13,7 @@ class QuickPoster
     public string $post_path = "";
 
     public function __construct(
-        private int $debug,
+        private readonly int $debug,
     ) {
     }
 
