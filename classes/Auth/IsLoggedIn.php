@@ -25,8 +25,8 @@ class IsLoggedIn
         if (!empty($mla_request->cookie[$this->di_config->cookie_name])) {
             $found_user_id = $this->getUserIdForCookieInDatabase(
                 cookie: $mla_request->cookie[$this->di_config->cookie_name],
-                ip_address: $_SERVER['REMOTE_ADDR'] ?? '',
-                user_agent: $_SERVER['HTTP_USER_AGENT'] ?? ''
+                ip_address: self::serverString('REMOTE_ADDR'),
+                user_agent: self::serverString('HTTP_USER_AGENT')
             );
             if (empty($found_user_id)) {
                 $this->killCookie();
@@ -66,6 +66,15 @@ class IsLoggedIn
         }
     }
 
+    /**
+     * A $_SERVER entry as a string; '' when it is missing or not a string.
+     */
+    private static function serverString(string $key): string
+    {
+        $value = $_SERVER[$key] ?? '';
+        return is_string($value) ? $value : '';
+    }
+
     public function getLoggedInUsername(): string
     {
         return $this->loggedInUsername;
@@ -82,8 +91,8 @@ class IsLoggedIn
             // getUserIdForCookieInDatabase).
             'cookie' => hash('sha256', $cookie),
             'last_access' => date(format: "Y-m-d H:i:s"),
-            'user_agent_md5' => md5($_SERVER['HTTP_USER_AGENT'] ?? ''),
-            'ip_address' => \Auth\IPBin::ipToBinary(ip: $_SERVER['REMOTE_ADDR'])
+            'user_agent_md5' => md5(self::serverString('HTTP_USER_AGENT')),
+            'ip_address' => \Auth\IPBin::ipToBinary(ip: self::serverString('REMOTE_ADDR'))
         ];
 
         // Insert using native PDO
@@ -178,7 +187,7 @@ class IsLoggedIn
         // captured cookie value keeps working for its full lifetime after the
         // user has "logged out".
         $presented = $_COOKIE[$this->di_config->cookie_name] ?? '';
-        if ($presented !== '') {
+        if (is_string($presented) && $presented !== '') {
             $stmt = $this->di_pdo->prepare("DELETE FROM `cookies` WHERE `cookie` = ?");
             $stmt->execute([hash('sha256', $presented)]);
         }
