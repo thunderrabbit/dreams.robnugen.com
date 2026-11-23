@@ -161,8 +161,8 @@ class DreamScanner
 
                 // Skip system files and directories
                 if (
-                    strpos($full_path, '/.git/') !== false ||
-                    strpos($full_path, '/.') !== false ||
+                    str_contains($full_path, '/.git/') ||
+                    str_contains($full_path, '/.') ||
                     !preg_match('/\.(html|md)$/', $filename)
                 ) {
                     continue;
