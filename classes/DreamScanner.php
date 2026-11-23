@@ -36,8 +36,11 @@ class DreamScanner
         }
 
         // Step 1: Read existing pointer
-        $contents = trim(file_get_contents($this->pointer_file));
-        return $contents ?: "";
+        $contents = file_get_contents($this->pointer_file);
+        if ($contents === false) {
+            return "";
+        }
+        return trim($contents) ?: "";
     }
 
     /**
@@ -77,6 +80,9 @@ class DreamScanner
             return [];
         }
         $contents = file_get_contents($this->failed_files);
+        if ($contents === false) {
+            return [];
+        }
         return array_filter(array_map('trim', explode("\n", $contents)));
     }
 

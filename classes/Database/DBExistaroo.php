@@ -102,11 +102,11 @@ class DBExistaroo
     {
         foreach ($this->automaticSchemaPrefixes as $prefix) {
             $dir = $this->config->app_path . "/db_schemas";
-            $schema_dirs = glob("$dir/{$prefix}_*", GLOB_ONLYDIR);
+            $schema_dirs = glob("$dir/{$prefix}_*", GLOB_ONLYDIR) ?: [];
 
             foreach ($schema_dirs as $schema_dir) {
                 $version = basename($schema_dir);
-                $sql_files = glob("$schema_dir/create_*.sql");
+                $sql_files = glob("$schema_dir/create_*.sql") ?: [];
 
                 foreach ($sql_files as $sql_path) {
                     echo "Applying schema file: $sql_path<br>";
@@ -129,6 +129,9 @@ class DBExistaroo
             throw new \Exception("Missing schema file: $sql_path");
         }
         $sql = file_get_contents($sql_path);
+        if ($sql === false) {
+            throw new \Exception("Could not read schema file: $sql_path");
+        }
 
         // Use native PDO to execute multiple SQL statements
         \Database\Base::executeMultipleSQL($this->pdo, $sql);
@@ -152,12 +155,12 @@ class DBExistaroo
 
         foreach (["00", "01", "02", "03", "04"] as $prefix) {
             // Get all schema directories that match the prefix
-            $schema_dirs = glob("$base_dir/{$prefix}_*", GLOB_ONLYDIR);
+            $schema_dirs = glob("$base_dir/{$prefix}_*", GLOB_ONLYDIR) ?: [];
 
             foreach ($schema_dirs as $schema_dir) {
                 $version = basename($schema_dir);   // directory name in $base_dir, e.g. "02_workers"
                 // print_rob($version, false);
-                $create_files = glob("$schema_dir/create_*.sql");
+                $create_files = glob("$schema_dir/create_*.sql") ?: [];
 
                 foreach ($create_files as $file) {
                     $key = "$version/" . basename($file);

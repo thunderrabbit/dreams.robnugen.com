@@ -184,7 +184,7 @@ class DreamKeywordAnalyzer
         $text = preg_replace('/[^\w\s]/', ' ', $text);
         $text = str_replace('APOSTROPHE', "'", $text);
 
-        $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split('/\s+/', $text, -1, PREG_SPLIT_NO_EMPTY) ?: [];
 
         $keywords = [];
 
@@ -278,12 +278,13 @@ class DreamKeywordAnalyzer
      */
     private function getLastAnalyzedId(): ?int
     {
-        $stmt = $this->database->query("
+        $stmt = $this->database->prepare("
             SELECT last_analyzed_dream_id
             FROM keyword_analysis_pointer
             ORDER BY kap_id DESC
             LIMIT 1
         ");
+        $stmt->execute();
 
         $result = $stmt->fetch();
         return $result ? $result['last_analyzed_dream_id'] : 0;
@@ -349,7 +350,7 @@ class DreamKeywordAnalyzer
      */
     public function getKeywordStats(): array|false
     {
-        $stmt = $this->database->query("
+        $stmt = $this->database->prepare("
             SELECT
                 COUNT(*) as total_keywords,
                 SUM(frequency) as total_instances,
@@ -360,6 +361,7 @@ class DreamKeywordAnalyzer
             FROM dream_keywords
             WHERE is_stop_word = 0
         ");
+        $stmt->execute();
         return $stmt->fetch();
     }
 
@@ -376,19 +378,21 @@ class DreamKeywordAnalyzer
      */
     public function getAnalysisProgress(): array
     {
-        $pointer_stmt = $this->database->query("
+        $pointer_stmt = $this->database->prepare("
             SELECT last_analyzed_dream_id, last_analysis_date, total_dreams_analyzed
             FROM keyword_analysis_pointer
             ORDER BY kap_id DESC
             LIMIT 1
         ");
+        $pointer_stmt->execute();
         $pointer = $pointer_stmt->fetch();
 
-        $total_stmt = $this->database->query("
+        $total_stmt = $this->database->prepare("
             SELECT COUNT(*) as total_dreams, MAX(dream_id) as max_dream_id
             FROM dreams
             WHERE content_clean IS NOT NULL AND content_clean != ''
         ");
+        $total_stmt->execute();
         $totals = $total_stmt->fetch();
 
         if (!$pointer) {
@@ -430,12 +434,13 @@ class DreamKeywordAnalyzer
         $this->database->query("TRUNCATE TABLE keywords_2_dreams");
 
         // Get all dreams with content
-        $dreams_stmt = $this->database->query("
+        $dreams_stmt = $this->database->prepare("
             SELECT dream_id, content_clean
             FROM dreams
             WHERE content_clean IS NOT NULL AND content_clean != ''
             ORDER BY dream_id
         ");
+        $dreams_stmt->execute();
 
         $total_dreams = 0;
         $total_links = 0;
