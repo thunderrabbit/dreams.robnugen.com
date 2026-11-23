@@ -9,7 +9,7 @@ BRANCH=$(git rev-parse --abbrev-ref HEAD)
 echo "Pushing $BRANCH to origin..."
 git push -u origin "$BRANCH"
 
-echo "Pulling $BRANCH on DreamHost..."
-ssh drc "cd dreams.robnugen.com; git restore .; git pull origin $BRANCH"
+echo "Pulling $BRANCH on DreamHost (quick)..."
+ssh quick "cd dreams.robnugen.com; git restore .; git pull origin $BRANCH"
 
 echo "Deployed $BRANCH to DreamHost."
