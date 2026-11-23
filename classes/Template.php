@@ -2,9 +2,10 @@
 
 class Template
 {
-    protected $template_location;
+    protected string $template_location;
 
-    protected $vars;
+    /** @var array<string, mixed> template variables by name */
+    protected array $vars;
 
     public function __construct(\Config $config)
     {
@@ -52,10 +53,6 @@ class Template
         extract($this->vars);           // Extract the vars to local namespace
 
         ob_start();                     // Start output buffering
-
-        if (!isset($this->template_location)) {
-            echo "No template file provided";
-        }
 
         include($this->template_location);  // Include the file
 
