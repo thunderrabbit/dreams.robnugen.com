@@ -123,7 +123,7 @@ class IsLoggedIn
      * @param string $username from the login form's POST
      * @return array{}|array{user_id: int, password_hash: string} the user's row, or empty when no user matches
      */
-    private function getIDandPHPHashedPasswordForUsername($username): array
+    private function getIDandPHPHashedPasswordForUsername(string $username): array
     {
         // get password hash
         $stmt = $this->di_pdo->prepare("SELECT `user_id`, `password_hash` FROM `users` WHERE LOWER(`username`) = LOWER(?) LIMIT 1");
@@ -143,7 +143,7 @@ class IsLoggedIn
      * @param string $password from the login form's POST
      * @return int
      */
-    private function checkPHPHashedPassword($username, $password): int
+    private function checkPHPHashedPassword(string $username, string $password): int
     {
         // get password hash
         $user_id_and_hash_array = $this->getIDandPHPHashedPasswordForUsername($username);
