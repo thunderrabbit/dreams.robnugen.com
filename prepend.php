@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of what arrays hold";
+const SENTIMENTAL_VERSION = "Dreaming of narrowed unions";
 
 # write errors to screen
 ini_set('display_errors', 1);
