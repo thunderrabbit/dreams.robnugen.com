@@ -83,7 +83,7 @@ class DreamScanner
         if ($contents === false) {
             return [];
         }
-        return array_filter(array_map('trim', explode("\n", $contents)));
+        return array_filter(array_map(trim(...), explode("\n", $contents)));
     }
 
     /**
