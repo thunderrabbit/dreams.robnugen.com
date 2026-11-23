@@ -51,7 +51,7 @@ class Utilities
         if ($realBase === false) {
             throw new \Exception("Schema directory does not exist: $appPath/db_schemas");
         }
-        if (!$realTarget || strpos($realTarget, $realBase) !== 0) {
+        if (!$realTarget || !str_starts_with($realTarget, $realBase)) {
             throw new \Exception("Resolved path escapes base directory: $versionWithFile");
         }
 
