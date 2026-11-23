@@ -17,9 +17,12 @@ $config = new \Config();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // handle form submission...
     $mla_database = \Database\Base::getPDO($config);
-    $username = trim($_POST['username'] ?? '');
+    $username = $_POST['username'] ?? '';
+    $username = is_string($username) ? trim($username) : '';
     $password = $_POST['pass'] ?? '';
+    $password = is_string($password) ? $password : '';
     $password_confirm = $_POST['pass_verify'] ?? '';
+    $password_confirm = is_string($password_confirm) ? $password_confirm : '';
 
     // Validate input
     $errors = [];
