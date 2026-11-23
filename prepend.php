@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of typed arguments";
+const SENTIMENTAL_VERSION = "Dreaming of declared types";
 
 # write errors to screen
 ini_set('display_errors', 1);
