@@ -103,7 +103,7 @@ class IsLoggedIn
 
     /**
      * @param string $username from the login form's POST
-     * @return array{}|array<string, mixed> the user's row, or empty when no user matches
+     * @return array{}|array{user_id: int, password_hash: string} the user's row, or empty when no user matches
      */
     private function getIDandPHPHashedPasswordForUsername($username): array
     {
