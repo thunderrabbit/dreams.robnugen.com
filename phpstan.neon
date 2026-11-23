@@ -2,7 +2,7 @@
 # and by .githooks/pre-commit. Start level: the highest that passes today with
 # no baseline. Climbing to 10 is its own step on mg's standards page.
 parameters:
-    level: 0
+    level: 1
     # The PHP dreams.robnugen.com is served on today (DreamHost panel).
     phpVersion: 80300
     paths:
@@ -18,6 +18,10 @@ parameters:
             # that a fresh clone doesn't have.
             - Tests/_output/*
             - Tests/Support/*
+        analyse:
+            # Vendored from Modernizing Legacy Applications in PHP: scanned
+            # for types, not analysed, since it is not ours to fix.
+            - classes/Mlaphp/*
     bootstrapFiles:
         - vendor/autoload.php
         - Tests/Unit/_bootstrap.php
