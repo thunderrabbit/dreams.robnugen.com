@@ -14,7 +14,7 @@ class Template
         $this->vars = [];
     }
 
-    public function setTemplate(string $template_file)
+    public function setTemplate(string $template_file): void
     {
         $this->template_location = $this->template_location . "/" . $template_file;
     }
