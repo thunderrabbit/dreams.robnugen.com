@@ -43,7 +43,7 @@ class DreamScanner
     /**
      * Step 5: Update pointer to last processed file
      */
-    public function updatePointer($file_path)
+    public function updatePointer(string $file_path)
     {
         file_put_contents($this->pointer_file, $file_path);
     }
@@ -61,7 +61,7 @@ class DreamScanner
     /**
      * Add a failed file to the failed files list
      */
-    public function addFailedFile($file_path)
+    public function addFailedFile(string $file_path)
     {
         file_put_contents($this->failed_files, $file_path . "\n", FILE_APPEND | LOCK_EX);
     }
@@ -91,7 +91,7 @@ class DreamScanner
     /**
      * Step 2-4: Get next batch of dream files, starting after pointer
      */
-    public function getNextBatch($limit = 50, $skip_failed = true)
+    public function getNextBatch(int $limit = 50, bool $skip_failed = true)
     {
         $last_processed = $this->getLastProcessedFile();
         $failed_files = $skip_failed ? $this->getFailedFiles() : [];
