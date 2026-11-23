@@ -19,7 +19,8 @@ if (!$is_logged_in->isLoggedIn()) {
     exit;
 }
 
-$input = json_decode(file_get_contents("php://input"), true);
+$body = file_get_contents("php://input");
+$input = $body === false ? null : json_decode($body, true);
 
 if (empty($input['migration'])) {
     http_response_code(400);
