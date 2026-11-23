@@ -1,6 +1,6 @@
 <?php
 
-const SENTIMENTAL_VERSION = "Dreaming of checks";
+const SENTIMENTAL_VERSION = "Dreaming of tests";
 
 # write errors to screen
 ini_set('display_errors', 1);
