@@ -10,6 +10,7 @@ include_once $matches[1] . '/prepend.php';
  * @var \Config $config
  * @var \PDO $mla_database
  * @var \Auth\IsLoggedIn $is_logged_in
+ * @var \Mlaphp\Request $mla_request
  */
 
 if (!$is_logged_in->isLoggedIn()) {
@@ -78,6 +79,7 @@ if ($tables_exist) {
 
         // Handle search
         $search_term = $mla_request->get['search'] ?? '';
+        $search_term = is_string($search_term) ? $search_term : '';
         if ($search_term) {
             $search_results = $analyzer->searchKeywords($search_term);
         }

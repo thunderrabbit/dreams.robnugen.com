@@ -9,6 +9,7 @@ include_once $matches[1] . '/prepend.php';
  *
  * @var \PDO $mla_database
  * @var \Auth\IsLoggedIn $is_logged_in
+ * @var \Mlaphp\Request $mla_request
  */
 
 if (!$is_logged_in->isLoggedIn()) {
@@ -20,6 +21,7 @@ if (!$is_logged_in->isLoggedIn()) {
 header('Content-Type: application/json');
 
 $keyword = $mla_request->post['keyword'] ?? '';
+$keyword = is_string($keyword) ? $keyword : '';
 $is_stop_word = filter_var($mla_request->post['is_stop_word'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
 if (!$keyword) {
