@@ -2,11 +2,8 @@
 
 class DreamImporter
 {
-    private \PDO $pdo;
-
-    public function __construct(\PDO $pdo)
+    public function __construct(private \PDO $pdo)
     {
-        $this->pdo = $pdo;
     }
 
     /**
