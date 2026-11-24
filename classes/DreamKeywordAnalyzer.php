@@ -468,7 +468,7 @@ class DreamKeywordAnalyzer
             // keeps only rows whose content_clean is a string.
             $keywords = is_string($dream['content_clean']) ? $this->extractKeywords($dream['content_clean']) : [];
 
-            foreach ($keywords as $keyword => $count) {
+            foreach (array_count_values($keywords) as $keyword => $count) {
                 // Get the dream_keyword_id for this keyword
                 $keyword_stmt = $this->database->prepare("
                     SELECT dream_keyword_id FROM dream_keywords WHERE keyword = ?
