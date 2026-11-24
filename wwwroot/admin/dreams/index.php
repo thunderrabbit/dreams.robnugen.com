@@ -26,10 +26,7 @@ $stats = $scanner->getStats();
 
 // Get database stats
 try {
-    $stmt = $mla_database->prepare("SELECT COUNT(*) FROM dreams");
-    $stmt->execute();
-    $db_count = $stmt->fetchColumn();
-    $stats['db_count'] = $db_count;
+    $stats['db_count'] = (new \Database\DreamsRepository($mla_database))->countAll();
 } catch (Exception $e) {
     $stats['db_count'] = "Error: " . $e->getMessage();
 }
