@@ -434,7 +434,7 @@ class DreamKeywordAnalyzer
             'total_dreams' => $totals['total_dreams'],
             'remaining_dreams' => $remaining['remaining_count'],
             'last_analysis_date' => $pointer['last_analysis_date'],
-            'max_dream_id' => $totals['max_id']
+            'max_dream_id' => $totals['max_dream_id']
         ];
     }
 
